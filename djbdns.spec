@@ -1,7 +1,7 @@
 Summary:     	DJB DNS 
 Summary(pl): 	DJB DNS
 Name:        	djbdns
-Version:     	1.03
+Version:     	1.04
 Release:     	1
 Group:       	Networking/Daemons
 Group(pl):   	Sieciowe/Serwery
