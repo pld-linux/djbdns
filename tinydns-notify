@@ -1,0 +1,58 @@
+#!/usr/bin/perl -w
+#
+# Extract zones and their nameservers from tinydns-data file(s) and
+# send DNS "NOTIFY" requests to nameservers listed in notify-list
+# The file "notify-list" must contain one nameserver per line
+#
+# Written 2001-02-20 by Andrew Pam <xanni@sericyb.com.au>
+# Modified 2002-08-22 to support records that define nameserver addresses
+# Modified 2002-08-30 to support "." records as well as "&" records
+# Copyright (c) 2001-02 Serious Cybernetics <http://www.sericyb.com.au/>
+# Partially inspired by dnsnotify by Jos Backus and James Raftery
+# Distribute and modify freely, providing attribution is preserved
+
+use Socket;
+use Net::DNS;
+
+my @self = split /\//, $0;
+die "Usage: $self[-1] zonefile [...]\n" unless $#ARGV >= 0;
+
+my %notify;
+open(LIST, "notify-list") or die "Can't open notify-list file\n";
+while (<LIST>)
+{
+  ($_) = split;
+  my $server = inet_aton $_ or (warn "$_ is not a valid server", next);
+  $notify{$server} = "";
+}
+close(LIST);
+
+while (<>)
+{
+  chomp;
+  my ($zone, $ip, $server) = /^[\&\.]([^:]*):([^:]*):([^:]*)/ or next;
+  $server = inet_aton ($ip || $server) or next;
+  $notify{$server} .= "$zone " if defined $notify{$server};
+}
+
+my $res = new Net::DNS::Resolver;
+
+foreach $s (keys %notify)
+{
+  next unless $_ = $notify{$s};
+  foreach (my @zone = split)
+  {
+    my $packet = new Net::DNS::Packet($_, "SOA", "IN");
+    die unless defined $packet;
+    ($packet->header)->opcode("NS_NOTIFY_OP");
+    ($packet->header)->rd(0);
+    ($packet->header)->aa(1);
+    my $server = inet_ntoa($s);
+    $res->nameservers($server);
+    $reply = $res->send($packet);
+    if (defined $reply)
+    { print "Received NOTIFY answer for $_ from " . $reply->answerfrom . "\n"; }
+    else
+    { warn "\$res->send indicates NOTIFY error for $server\n"; }
+  }
+}
