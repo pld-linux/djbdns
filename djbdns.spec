@@ -2,18 +2,30 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	9
+Release:	10
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
+Group(cs):	Sí»ové/Démoni
+Group(da):	Netværks/Dæmoner
 Group(de):	Netzwerkwesen/Server
+Group(es):	Red/Servidores
+Group(fr):	Réseau/Serveurs
+Group(is):	Net/Púkar
+Group(it):	Rete/Demoni
+Group(no):	Nettverks/Daemoner
 Group(pl):	Sieciowe/Serwery
+Group(pt):	Rede/Servidores
+Group(ru):	óÅÔØ/äÅÍÏÎÙ
+Group(sl):	Omre¾ni/Stre¾niki
+Group(sv):	Nätverk/Demoner
+Group(uk):	íÅÒÅÖÁ/äÅÍÏÎÉ
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
 Source1:	%{name}-doc.tar.gz
-Source2:	ftp://ftp.innominate.org/gpa/djb/djbdns-1.05-man.tar.gz
+Source2:	ftp://ftp.innominate.org/gpa/djb/%{name}-%{version}-man.tar.gz
 Patch0:		dnscache-1.05-multiple-ip.patch
-Patch1:		http://www.fefe.de/dns/djbdns-1.05-ipv6.diff
+Patch1:		http://www.fefe.de/dns/%{name}-1.05-ipv6.diff
 #		based on http://www.ohse.de/uwe/patches/djbdns-1.05-multiip.diff
-Patch2:		djbdns-1.05-multiip.diff
+Patch2:		%{name}-1.05-multiip.diff
 URL:		http://cr.yp.to/djbdns.html
 Prereq:		shadow
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -69,8 +81,20 @@ Summary:	DJB's local DNS cache
 Summary(de):	DJBs lokaler DNS-Cache
 Summary(pl):	Lokalny cache DNS od DJB
 Group:		Networking/Daemons
+Group(cs):	Sí»ové/Démoni
+Group(da):	Netværks/Dæmoner
 Group(de):	Netzwerkwesen/Server
+Group(es):	Red/Servidores
+Group(fr):	Réseau/Serveurs
+Group(is):	Net/Púkar
+Group(it):	Rete/Demoni
+Group(no):	Nettverks/Daemoner
 Group(pl):	Sieciowe/Serwery
+Group(pt):	Rede/Servidores
+Group(ru):	óÅÔØ/äÅÍÏÎÙ
+Group(sl):	Omre¾ni/Stre¾niki
+Group(sv):	Nätverk/Demoner
+Group(uk):	íÅÒÅÖÁ/äÅÍÏÎÉ
 Requires:	%{name} = %{version}
 Requires:	daemontools >= 0.70-5
 Prereq:		fileutils
@@ -101,8 +125,20 @@ Summary:	DJB's DNS server
 Summary(de):	DJBs DNS-Server
 Summary(pl):	Serwer DNS od DJB
 Group:		Networking/Daemons
+Group(cs):	Sí»ové/Démoni
+Group(da):	Netværks/Dæmoner
 Group(de):	Netzwerkwesen/Server
+Group(es):	Red/Servidores
+Group(fr):	Réseau/Serveurs
+Group(is):	Net/Púkar
+Group(it):	Rete/Demoni
+Group(no):	Nettverks/Daemoner
 Group(pl):	Sieciowe/Serwery
+Group(pt):	Rede/Servidores
+Group(ru):	óÅÔØ/äÅÍÏÎÙ
+Group(sl):	Omre¾ni/Stre¾niki
+Group(sv):	Nätverk/Demoner
+Group(uk):	íÅÒÅÖÁ/äÅÍÏÎÉ
 Requires:	%{name} = %{version}
 Requires:	daemontools >= 0.70-5
 Requires:	make
@@ -128,8 +164,20 @@ Summary:	DJB's load-balancing DNS server
 Summary(de):	DJBs Belastung ausgleichender DNS-Server
 Summary(pl):	Serwer DNS równowa¿±cy obci±¿enie od DJB
 Group:		Networking/Daemons
+Group(cs):	Sí»ové/Démoni
+Group(da):	Netværks/Dæmoner
 Group(de):	Netzwerkwesen/Server
+Group(es):	Red/Servidores
+Group(fr):	Réseau/Serveurs
+Group(is):	Net/Púkar
+Group(it):	Rete/Demoni
+Group(no):	Nettverks/Daemoner
 Group(pl):	Sieciowe/Serwery
+Group(pt):	Rede/Servidores
+Group(ru):	óÅÔØ/äÅÍÏÎÙ
+Group(sl):	Omre¾ni/Stre¾niki
+Group(sv):	Nätverk/Demoner
+Group(uk):	íÅÒÅÖÁ/äÅÍÏÎÉ
 Requires:	%{name} = %{version}
 Requires:	daemontools >= 0.70-5
 Requires:	make
@@ -158,8 +206,20 @@ Summary:	DJB's reverse DNS wall
 Summary(de):	DJBs Wand rückgekehrten DNSs
 Summary(pl):	¦ciana dla odwrotnych zapytañ DNS od DJB
 Group:		Networking/Daemons
+Group(cs):	Sí»ové/Démoni
+Group(da):	Netværks/Dæmoner
 Group(de):	Netzwerkwesen/Server
+Group(es):	Red/Servidores
+Group(fr):	Réseau/Serveurs
+Group(is):	Net/Púkar
+Group(it):	Rete/Demoni
+Group(no):	Nettverks/Daemoner
 Group(pl):	Sieciowe/Serwery
+Group(pt):	Rede/Servidores
+Group(ru):	óÅÔØ/äÅÍÏÎÙ
+Group(sl):	Omre¾ni/Stre¾niki
+Group(sv):	Nätverk/Demoner
+Group(uk):	íÅÒÅÖÁ/äÅÍÏÎÉ
 Requires:	%{name} = %{version}
 Requires:	daemontools >= 0.70-5
 Prereq:		shadow
@@ -187,8 +247,20 @@ Summary:	DJB's IP-address-listing DNS server
 Summary(de):	DJBs IP-Adressen-Listen-DNS-Server
 Summary(pl):	Serwer DNS list adresów IP od DJB
 Group:		Networking/Daemons
+Group(cs):	Sí»ové/Démoni
+Group(da):	Netværks/Dæmoner
 Group(de):	Netzwerkwesen/Server
+Group(es):	Red/Servidores
+Group(fr):	Réseau/Serveurs
+Group(is):	Net/Púkar
+Group(it):	Rete/Demoni
+Group(no):	Nettverks/Daemoner
 Group(pl):	Sieciowe/Serwery
+Group(pt):	Rede/Servidores
+Group(ru):	óÅÔØ/äÅÍÏÎÙ
+Group(sl):	Omre¾ni/Stre¾niki
+Group(sv):	Nätverk/Demoner
+Group(uk):	íÅÒÅÖÁ/äÅÍÏÎÉ
 Requires:	%{name} = %{version}
 Requires:	daemontools >= 0.70-5
 Requires:	make
@@ -218,8 +290,20 @@ Summary:	DJB's DNS zone-transfer server
 Summary(de):	DJBs DNS-Zonen-Transfer-Server
 Summary(pl):	Serwer transferów stref DNS od DJB
 Group:		Networking/Daemons
+Group(cs):	Sí»ové/Démoni
+Group(da):	Netværks/Dæmoner
 Group(de):	Netzwerkwesen/Server
+Group(es):	Red/Servidores
+Group(fr):	Réseau/Serveurs
+Group(is):	Net/Púkar
+Group(it):	Rete/Demoni
+Group(no):	Nettverks/Daemoner
 Group(pl):	Sieciowe/Serwery
+Group(pt):	Rede/Servidores
+Group(ru):	óÅÔØ/äÅÍÏÎÙ
+Group(sl):	Omre¾ni/Stre¾niki
+Group(sv):	Nätverk/Demoner
+Group(uk):	íÅÒÅÖÁ/äÅÍÏÎÉ
 Requires:	%{name} = %{version}
 Requires:	tinydns = %{version}
 Requires:	daemontools >= 0.70-5
@@ -532,9 +616,11 @@ if [ -n "`id -u dnscache 2>/dev/null`" ]; then
 else
 	%{_sbindir}/useradd -u 33 -r -d /etc/dnscache -s /bin/false -c "djbdns User" -g djbdns dnscache 1>&2
 fi
-dd if=/dev/urandom of=seed bs=128c count=1
 
 %post -n dnscache
+if [ \! -s /etc/dnscache/seed ]; then
+	dd if=/dev/urandom of=/etc/dnscache/seed bs=128c count=1
+fi
 if diff -u /etc/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and pickdns can't work on the same"
 	echo "IP address. You have to edit either /etc/dnscache/env/IP"
