@@ -2,13 +2,14 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	5
+Release:	6
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
 Source1:	%{name}-doc.tar.gz
+Source2:	ftp://ftp.innominate.org/gpa/djb/djbdns-1.05-man.tar.gz
 Patch0:		dnscache-1.05-multiple-ip.patch
 Patch1:		http://www.fefe.de/dns/djbdns-1.05-ipv6.diff
 URL:		http://cr.yp.to/djbdns.html
@@ -242,7 +243,8 @@ DNS-over-TCP i odpowiada przy u¿yciu lokalnie skonfigurowanych
 informacji.
 
 %prep
-%setup -q -a1
+%setup -q -a1 -a2
+
 %patch0 -p1
 %patch1 -p1
 cd doc
@@ -256,6 +258,7 @@ echo %{_prefix} > conf-home
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_sysconfdir}}
+install -d $RPM_BUILD_ROOT%{_mandir}/{man1,man5,man8}
 
 install dnsroots.global $RPM_BUILD_ROOT%{_sysconfdir}
 install	axfr-get	$RPM_BUILD_ROOT%{_bindir}
@@ -288,6 +291,9 @@ install tinydns-edit	$RPM_BUILD_ROOT%{_bindir}
 install tinydns-get	$RPM_BUILD_ROOT%{_bindir}
 install walldns		$RPM_BUILD_ROOT%{_bindir}
 install walldns-conf	$RPM_BUILD_ROOT%{_bindir}
+install djbdns-man/*.1	$RPM_BUILD_ROOT%{_mandir}/man1
+install djbdns-man/*.5  $RPM_BUILD_ROOT%{_mandir}/man5
+install djbdns-man/*.8  $RPM_BUILD_ROOT%{_mandir}/man8
 
 gzip -9nf CHANGES TODO MULTIPLEIP TINYDNS
 
@@ -356,9 +362,17 @@ cat>root/add-host<<___
 #!/bin/sh
 exec %{_bindir}/tinydns-edit data data.new add host \${1+"\$@"}
 ___
+cat>root/add-host6<<___
+#!/bin/sh
+exec %{_bindir}/tinydns-edit data data.new add host6 \${1+"\$@"}
+___
 cat>root/add-alias<<___
 #!/bin/sh
 exec %{_bindir}/tinydns-edit data data.new add alias \${1+"\$@"}
+___
+cat>root/add-alias6<<___
+#!/bin/sh
+exec %{_bindir}/tinydns-edit data data.new add alias6 \${1+"\$@"}
 ___
 cat>root/add-mx<<___
 #!/bin/sh
@@ -606,6 +620,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/cachetest
 %attr(755,root,root) %{_bindir}/dns[f-t]*
 %attr(755,root,root) %{_bindir}/axfr-get
+%{_mandir}/man[15]/*
+%{_mandir}/man8/axfr-get*
 
 %files -n dnscache
 %defattr(644,root,root,755)
@@ -624,6 +640,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %attr(600,root,root) %{_sysconfdir}/dnscache/root/ip/*
 %config %attr(644,root,root) %{_sysconfdir}/dnscache/root/servers/*
 %ghost %attr(600,root,root) %{_sysconfdir}/dnscache/seed
+%{_mandir}/man8/dnscache*
 /var/run/service/dnscache
 
 %files -n tinydns
@@ -641,6 +658,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_sysconfdir}/tinydns/root/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/tinydns/root/data
 %attr(755,root,root) %{_sysconfdir}/tinydns/root/add-*
+%{_mandir}/man8/tinydns*
 /var/run/service/tinydns
 
 %files -n pickdns
@@ -657,6 +675,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(2755,root,root) %{_sysconfdir}/pickdns/root
 %attr(644,root,root) %{_sysconfdir}/pickdns/root/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/pickdns/root/data
+%{_mandir}/man8/pickdns*
 /var/run/service/pickdns
 
 %files -n walldns
@@ -671,6 +690,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %attr(644,root,root) %{_sysconfdir}/walldns/env/*
 %attr(755,root,root) %{_sysconfdir}/walldns/run
 %dir %attr(2755,root,root) %{_sysconfdir}/walldns/root
+%{_mandir}/man8/walldns*
 /var/run/service/walldns
 
 %files -n rbldns
@@ -687,6 +707,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(2755,root,root) %{_sysconfdir}/rbldns/root
 %attr(644,root,root) %{_sysconfdir}/rbldns/root/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/rbldns/root/data
+%{_mandir}/man8/rbldns*
 /var/run/service/rbldns
 
 %files -n axfrdns
@@ -702,4 +723,5 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sysconfdir}/axfrdns/run
 %attr(644,root,root) %{_sysconfdir}/axfrdns/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/axfrdns/tcp
+%{_mandir}/man8/axfrdns*
 /var/run/service/axfrdns
