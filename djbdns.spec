@@ -512,16 +512,6 @@ ln -s ..%{_sysconfdir}/axfrdns
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
-if [ -n "`id -u dnslog 2>/dev/null`" ]; then
-	if [ "`id -u dnslog`" != "32" ]; then
-		echo "Error: user dnslog doesn't have uid=32. Correct this before installing djbdns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 32 -r -d / -s /bin/false -c "djbdns User" -g djbdns dnslog 1>&2
-fi
-
 %post dnscache
 if [ \! -s /etc/dnscache/seed ]; then
 	dd if=/dev/urandom of=/etc/dnscache/seed bs=128c count=1
