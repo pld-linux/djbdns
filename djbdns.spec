@@ -67,7 +67,7 @@ Summary(pl):	Lokalny cache DNS od DJB
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
-Prereq:		%{name} = %{version}
+Requires:	%{name} = %{version}
 Requires:	daemontools
 Prereq:		fileutils
 Prereq:		shadow
@@ -99,7 +99,7 @@ Summary(pl):	Serwer DNS od DJB
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
-Prereq:		%{name} = %{version}
+Requires:	%{name} = %{version}
 Requires:	daemontools
 Requires:	make
 Prereq:		shadow
@@ -126,7 +126,7 @@ Summary(pl):	Serwer DNS równowa¿±cy obci±¿enie od DJB
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
-Prereq:		%{name} = %{version}
+Requires:	%{name} = %{version}
 Requires:	daemontools
 Requires:	make
 Prereq:		shadow
@@ -156,7 +156,7 @@ Summary(pl):	¦ciana dla odwrotnych zapytañ DNS od DJB
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
-Prereq:		%{name} = %{version}
+Requires:	%{name} = %{version}
 Requires:	daemontools
 Prereq:		shadow
 
@@ -185,7 +185,7 @@ Summary(pl):	Serwer DNS list adresów IP od DJB
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
-Prereq:		%{name} = %{version}
+Requires:	%{name} = %{version}
 Requires:	daemontools
 Requires:	make
 Prereq:		shadow
@@ -216,7 +216,7 @@ Summary(pl):	Serwer transferów stref DNS od DJB
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
-Prereq:		%{name} = %{version}
+Requires:	%{name} = %{version}
 Requires:	tinydns = %{version}
 Requires:	daemontools
 Requires:	ucspi-tcp
@@ -365,7 +365,7 @@ exec %{_bindir}/tinydns-edit data data.new add mx \${1+"\$@"}
 ___
 cat>root/Makefile<<___
 data.cdb: data
-	%{_bindir}/tinydns-data
+        %{_bindir}/tinydns-data
 ___
 
 ##### PICKDNS #####
@@ -482,55 +482,119 @@ ln -s ../../..%{_sysconfdir}/rbldns
 ln -s ../../..%{_sysconfdir}/axfrdns
 
 %pre
-GID=32; %groupadd
-USER=dnslog; UID=32; HOMEDIR=/; COMMENT="djbdns User"; %useradd
+if [ -n "`getgid djbdns`" ]; then
+	if [ "`getgid djbdns`" != "32" ]; then
+		echo "Warning: the group djbdns doesn't have gid=32. Correct this before installing djbdns" 1>&2
+		exit 1
+	fi
+else
+	%{_sbindir}/groupadd -g 32 -r -f djbdns
+fi
+if [ -n "`id -u dnslog 2>/dev/null`" ]; then
+	if [ "`id -u dnslog`" != "32" ]; then
+		echo "Warning: the user dnslog doesn't have uid=32. Correct this before installing djbdns" 1>&2
+		exit 1
+	fi
+else
+	%{_sbindir}/useradd -u 32 -r -d / -s /bin/false -c "djbdns User" -g djbdns dnslog 1>&2
+fi
 
 %postun
-USER=dnslog; %userdel
-%groupdel
+if [ "$1" = "0" ]; then
+	/usr/sbin/userdel dnslog
+	/usr/sbin/groupdel djbdns
+fi
 
 %pre -n dnscache
-USER=dnscache; UID=33; HOMEDIR=/etc/dnscache; COMMENT="djbdns User"
-NAME=dnscache; %useradd
-dd if=/dev/urandom of=/etc/dnscache/seed bs=128c count=1
+if [ -n "`id -u dnscache 2>/dev/null`" ]; then
+	if [ "`id -u dnscache`" != "33" ]; then
+		echo "Warning: the user dnscache doesn't have uid=33. Correct this before installing dnscache" 1>&2
+		exit 1
+	fi
+else
+	%{_sbindir}/useradd -u 33 -r -d /etc/dnscache -s /bin/false -c "djbdns User" -g djbdns dnscache 1>&2
+fi
+dd if=/dev/urandom of=seed bs=128c count=1
 
 %postun -n dnscache
-USER=dnscache; %userdel
+if [ "$1" = "0" ]; then
+	/usr/sbin/userdel dnscache
+fi
 
 %pre -n tinydns
-USER=tinydns; UID=34; HOMEDIR=/etc/tinydns; COMMENT="djbdns User"
-NAME=tinydns; %useradd
+if [ -n "`id -u tinydns 2>/dev/null`" ]; then
+	if [ "`id -u tinydns`" != "34" ]; then
+		echo "Warning: the user tinydns doesn't have uid=34. Correct this before installing tinydns" 1>&2
+		exit 1
+	fi
+else
+	%{_sbindir}/useradd -u 34 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g djbdns tinydns 1>&2
+fi
 
 %postun -n tinydns
-USER=tinydns; %userdel
+if [ "$1" = "0" ]; then
+	/usr/sbin/userdel tinydns
+fi
 
 %pre -n pickdns
-USER=pickdns; UID=35; HOMEDIR=/etc/pickdns; COMMENT="djbdns User"
-NAME=pickdns; %useradd
+if [ -n "`id -u pickdns 2>/dev/null`" ]; then
+	if [ "`id -u pickdns`" != "35" ]; then
+		echo "Warning: the user pickdns doesn't have uid=35. Correct this before installing pickdns" 1>&2
+		exit 1
+	fi
+else
+	%{_sbindir}/useradd -u 35 -r -d /etc/pickdns -s /bin/false -c "djbdns User" -g djbdns pickdns 1>&2
+fi
 
 %postun -n pickdns
-USER=pickdns; %userdel
+if [ "$1" = "0" ]; then
+	/usr/sbin/userdel pickdns
+fi
 
 %pre -n walldns
-USER=walldns; UID=36; HOMEDIR=/etc/walldns; COMMENT="djbdns User"
-NAME=walldns; %useradd
+if [ -n "`id -u walldns 2>/dev/null`" ]; then
+	if [ "`id -u walldns`" != "36" ]; then
+		echo "Warning: the user walldns doesn't have uid=36. Correct this before installing walldns" 1>&2
+		exit 1
+	fi
+else
+	%{_sbindir}/useradd -u 36 -r -d /etc/walldns -s /bin/false -c "djbdns User" -g djbdns walldns 1>&2
+fi
 
 %postun -n walldns
-USER=walldns; %userdel
+if [ "$1" = "0" ]; then
+	/usr/sbin/userdel walldns
+fi
 
 %pre -n rbldns
-USER=rbldns; UID=37; HOMEDIR=/etc/rbldns; COMMENT="djbdns User"
-NAME=rbldns; %useradd
+if [ -n "`id -u rbldns 2>/dev/null`" ]; then
+	if [ "`id -u rbldns`" != "37" ]; then
+		echo "Warning: the user rbldns doesn't have uid=37. Correct this before installing rbldns" 1>&2
+		exit 1
+	fi
+else
+	%{_sbindir}/useradd -u 37 -r -d /etc/rbldns -s /bin/false -c "djbdns User" -g djbdns rbldns 1>&2
+fi
 
 %postun -n rbldns
-USER=rbldns; %userdel
+if [ "$1" = "0" ]; then
+	/usr/sbin/userdel rbldns
+fi
 
 %pre -n axfrdns
-USER=axfrdns; UID=38; HOMEDIR=/etc/axfrdns; COMMENT="djbdns User"
-NAME=axfrdns; %useradd
+if [ -n "`id -u axfrdns 2>/dev/null`" ]; then
+	if [ "`id -u axfrdns`" != "38" ]; then
+		echo "Warning: the user axfrdns doesn't have uid=38. Correct this before installing axfrdns" 1>&2
+		exit 1
+	fi
+else
+	%{_sbindir}/useradd -u 38 -r -d /etc/axfrdns -s /bin/false -c "djbdns User" -g djbdns axfrdns 1>&2
+fi
 
 %postun -n axfrdns
-USER=axfrdns; %userdel
+if [ "$1" = "0" ]; then
+	/usr/sbin/userdel axfrdns
+fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
