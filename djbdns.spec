@@ -1,3 +1,4 @@
+# TODO: bcond patches
 Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
@@ -24,6 +25,8 @@ Patch5:		%{name}-glibc.patch
 Patch6:         %{name}-rbldns_a.patch
 # http://tinydns.org/djbdns-1.05-ignoreip.patch
 Patch7:         %{name}-ignoreip.patch
+# http://core.segfault.pl/~hobbit/tinydns-include.patch
+Patch8:		%{name}-tinydns-include.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
 Requires(pre):	/usr/bin/getgid
@@ -326,6 +329,7 @@ informacji.
 %patch5
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 cd doc
 ln -s merge/djbdns/* .
 
