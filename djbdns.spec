@@ -6,6 +6,7 @@ Release:	13
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
+# Source0-md5:	3147c5cd56832aa3b41955c7a51cbeb2
 Source1:	%{name}-doc.tar.gz
 Source2:	ftp://ftp.innominate.org/gpa/djb/%{name}-%{version}-man.tar.gz
 Patch0:		dnscache-1.05-multiple-ip.patch
