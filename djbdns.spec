@@ -68,7 +68,7 @@ install tinydns-get	$RPM_BUILD_ROOT%{_bindir}
 install walldns		$RPM_BUILD_ROOT%{_bindir}
 install walldns-conf	$RPM_BUILD_ROOT%{_bindir}
 
-gzip -9nf CHANGES TODO VERSION MULTIPLEIP
+gzip -9nf CHANGES TODO MULTIPLEIP TINYDNS
 
 %clean
 rm -rf $RPM_BUILD_ROOT
