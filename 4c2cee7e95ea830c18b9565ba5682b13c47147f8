@@ -1,0 +1,2 @@
+- make spec %{debug} ready,
+- use %{__cc} macro instead directly gcc.
