@@ -16,12 +16,7 @@ Patch3:		http://iksz.hu/package/djbdns-conf/djbdns-1.05-multi_tinydns_data.patch
 Patch4:		%{name}-srv.patch
 Patch5:		%{name}-glibc.patch
 URL:		http://cr.yp.to/djbdns.html
-Requires(pre):	/usr/bin/getgid
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/groupadd
-Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
-Requires(postun):	/usr/sbin/groupdel
+Requires(pre):	user-dnslog
 Provides:	nameserver
 Obsoletes:	caching-nameserver
 Obsoletes:	nameserver
@@ -79,12 +74,10 @@ Summary(de):	DJBs lokaler DNS-Cache
 Summary(pl):	Lokalny cache DNS od DJB
 Group:		Networking/Daemons
 PreReq:		%{name} = %{version}
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
+Requires(pre):	user-dnscache
 Requires(post):	diffutils
 Requires(post):	fileutils
 Requires(preun):	daemontools
-Requires(postun):	/usr/sbin/userdel
 Requires:	daemontools >= 0.70-5
 Obsoletes:	dnscache
 
@@ -114,11 +107,9 @@ Summary(de):	DJBs DNS-Server
 Summary(pl):	Serwer DNS od DJB
 Group:		Networking/Daemons
 PreReq:		%{name} = %{version}
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
+Requires(pre):	user-tinydns
 Requires(post):	diffutils
 Requires(preun):	daemontools
-Requires(postun):	/usr/sbin/userdel
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Obsoletes:	tinydns
@@ -144,11 +135,9 @@ Summary(de):	DJBs Belastung ausgleichender DNS-Server
 Summary(pl):	Serwer DNS równowa¿±cy obci±¿enie od DJB
 Group:		Networking/Daemons
 PreReq:		%{name} = %{version}
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
+Requires(pre):	user-pickdns
 Requires(post):	diffutils
 Requires(preun):	daemontools
-Requires(postun):	/usr/sbin/userdel
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Obsoletes:	pickdns
@@ -177,11 +166,9 @@ Summary(de):	DJBs Wand rückgekehrten DNSs
 Summary(pl):	¦ciana dla odwrotnych zapytañ DNS od DJB
 Group:		Networking/Daemons
 PreReq:		%{name} = %{version}
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
+Requires(pre):	user-walldns
 Requires(post):	diffutils
 Requires(preun):	daemontools
-Requires(postun):	/usr/sbin/userdel
 Requires:	daemontools >= 0.70-5
 Obsoletes:	walldns
 
@@ -209,11 +196,9 @@ Summary(de):	DJBs IP-Adressen-Listen-DNS-Server
 Summary(pl):	Serwer DNS list adresów IP od DJB
 Group:		Networking/Daemons
 PreReq:		%{name} = %{version}
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
+Requires(pre):	user-rbldns
 Requires(post):	diffutils
 Requires(preun):	daemontools
-Requires(postun):	/usr/sbin/userdel
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Obsoletes:	rbldns
@@ -243,10 +228,8 @@ Summary(de):	DJBs DNS-Zonen-Transfer-Server
 Summary(pl):	Serwer transferów stref DNS od DJB
 Group:		Networking/Daemons
 PreReq:		%{name} = %{version}
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
+Requires(pre):	user-axfrdns
 Requires(preun):	daemontools
-Requires(postun):	/usr/sbin/userdel
 Requires:	%{name}-tinydns = %{version}
 Requires:	daemontools >= 0.70-5
 Requires:	make
@@ -530,14 +513,6 @@ ln -s ..%{_sysconfdir}/axfrdns
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`getgid djbdns`" ]; then
-	if [ "`getgid djbdns`" != "32" ]; then
-		echo "Error: group djbdns doesn't have gid=32. Correct this before installing djbdns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 32 -r -f djbdns
-fi
 if [ -n "`id -u dnslog 2>/dev/null`" ]; then
 	if [ "`id -u dnslog`" != "32" ]; then
 		echo "Error: user dnslog doesn't have uid=32. Correct this before installing djbdns." 1>&2
@@ -545,22 +520,6 @@ if [ -n "`id -u dnslog 2>/dev/null`" ]; then
 	fi
 else
 	/usr/sbin/useradd -u 32 -r -d / -s /bin/false -c "djbdns User" -g djbdns dnslog 1>&2
-fi
-
-%postun
-if [ "$1" = "0" ]; then
-	/usr/sbin/userdel dnslog
-	/usr/sbin/groupdel djbdns
-fi
-
-%pre dnscache
-if [ -n "`id -u dnscache 2>/dev/null`" ]; then
-	if [ "`id -u dnscache`" != "33" ]; then
-		echo "Error: user dnscache doesn't have uid=33. Correct this before installing djbdns-dnscache." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 33 -r -d /etc/dnscache -s /bin/false -c "djbdns User" -g djbdns dnscache 1>&2
 fi
 
 %post dnscache
@@ -593,21 +552,6 @@ if [ "$1" = "0" ]; then
 	svc -d /service/dnscache
 fi
 
-%postun dnscache
-if [ "$1" = "0" ]; then
-	/usr/sbin/userdel dnscache
-fi
-
-%pre tinydns
-if [ -n "`id -u tinydns 2>/dev/null`" ]; then
-	if [ "`id -u tinydns`" != "34" ]; then
-		echo "Error: user tinydns doesn't have uid=34. Correct this before installing djbdns-tinydns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 34 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g djbdns tinydns 1>&2
-fi
-
 %post tinydns
 if diff -u /etc/{dnscache,tinydns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and tinydns can't work on the same"
@@ -633,21 +577,6 @@ fi
 %preun tinydns
 if [ "$1" = "0" ]; then
 	svc -d /service/tinydns
-fi
-
-%postun tinydns
-if [ "$1" = "0" ]; then
-	/usr/sbin/userdel tinydns
-fi
-
-%pre pickdns
-if [ -n "`id -u pickdns 2>/dev/null`" ]; then
-	if [ "`id -u pickdns`" != "35" ]; then
-		echo "Error: user pickdns doesn't have uid=35. Correct this before installing djbdns-pickdns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 35 -r -d /etc/pickdns -s /bin/false -c "djbdns User" -g djbdns pickdns 1>&2
 fi
 
 %post pickdns
@@ -677,21 +606,6 @@ if [ "$1" = "0" ]; then
 	svc -d /service/pickdns
 fi
 
-%postun pickdns
-if [ "$1" = "0" ]; then
-	/usr/sbin/userdel pickdns
-fi
-
-%pre walldns
-if [ -n "`id -u walldns 2>/dev/null`" ]; then
-	if [ "`id -u walldns`" != "36" ]; then
-		echo "Error: user walldns doesn't have uid=36. Correct this before installing djbdns-walldns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 36 -r -d /etc/walldns -s /bin/false -c "djbdns User" -g djbdns walldns 1>&2
-fi
-
 %post walldns
 if diff -u /etc/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and walldns can't work on the same"
@@ -717,21 +631,6 @@ fi
 %preun walldns
 if [ "$1" = "0" ]; then
 	svc -d /service/walldns
-fi
-
-%postun walldns
-if [ "$1" = "0" ]; then
-	/usr/sbin/userdel walldns
-fi
-
-%pre rbldns
-if [ -n "`id -u rbldns 2>/dev/null`" ]; then
-	if [ "`id -u rbldns`" != "37" ]; then
-		echo "Error: user rbldns doesn't have uid=37. Correct this before installing djbdns-rbldns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 37 -r -d /etc/rbldns -s /bin/false -c "djbdns User" -g djbdns rbldns 1>&2
 fi
 
 %post rbldns
@@ -761,29 +660,9 @@ if [ "$1" = "0" ]; then
 	svc -d /service/rbldns
 fi
 
-%postun rbldns
-if [ "$1" = "0" ]; then
-	/usr/sbin/userdel rbldns
-fi
-
-%pre axfrdns
-if [ -n "`id -u axfrdns 2>/dev/null`" ]; then
-	if [ "`id -u axfrdns`" != "38" ]; then
-		echo "Error: user axfrdns doesn't have uid=38. Correct this before installing djbdns-axfrdns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 38 -r -d /etc/axfrdns -s /bin/false -c "djbdns User" -g djbdns axfrdns 1>&2
-fi
-
 %preun axfrdns
 if [ "$1" = "0" ]; then
 	svc -d /service/axfrdns
-fi
-
-%postun axfrdns
-if [ "$1" = "0" ]; then
-	/usr/sbin/userdel axfrdns
 fi
 
 %files
