@@ -81,7 +81,7 @@ if [ -n "`getgid tinydns`" ]; then
 		exit 1
 	fi
 else
-	/usr/sbin/groupadd -g 59 -r -f tinydns
+	%{_sbindir}/groupadd -g 59 -r -f tinydns
 fi
 if [ -n "`id -u tinydns 2>/dev/null`" ]; then
 	if [ "`id -u tinydns`" != "59" ]; then
@@ -89,7 +89,7 @@ if [ -n "`id -u tinydns 2>/dev/null`" ]; then
 		exit 1
 	fi
 else
-	/usr/sbin/useradd -u 59 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g tinydns tinydns 1>&2
+	%{_sbindir}/useradd -u 59 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g tinydns tinydns 1>&2
 fi
 if [ -n "`id -u dnslog 2>/dev/null`" ]; then
 	if [ "`id -u dnslog`" != "60" ]; then
@@ -97,7 +97,7 @@ if [ -n "`id -u dnslog 2>/dev/null`" ]; then
 		exit 1
 	fi
 else
-	/usr/sbin/useradd -u 60 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g tinydns dnslog 1>&2
+	%{_sbindir}/useradd -u 60 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g tinydns dnslog 1>&2
 fi
 
 
