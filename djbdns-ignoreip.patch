@@ -1,0 +1,68 @@
+This patch changes djbdns's dnscache program so that it will ignore the
+IP address given in the IGNOREIP environment variable.  I wrote this
+patch because of Verisign's oh-so helpful wildcard A records for *.COM
+and *.NET.  Install the patch like this:
+    patch <djbdns-1.05-ignoreip.patch
+    svc -d /service/dnscache
+    make setup check
+    svc -u /service/dnscache
+
+Configure it to ignore Verisign's wildcard record like this:
+    echo 64.94.110.11 >/service/dnscache/env/IGNOREIP
+    svc -t /service/dnscache
+
+If IGNOREIP isn't found in the environment variable space, nothing is
+ignored.
+
+--
+--My blog is at angry-economist.russnelson.com  | Free markets express in the
+Crynwr sells support for free software  | PGPok | practical world our belief
+521 Pleasant Valley Rd. | +1 315 268 1925 voice | that there is that of God
+Potsdam, NY 13676-3213  | +1 315 268 9201 FAX   | in all people. -Chris V.
+
+
+diff -u orig/dnscache.c ./dnscache.c
+--- orig/dnscache.c	2001-02-11 16:11:45.000000000 -0500
++++ ./dnscache.c	2003-09-15 23:08:36.000000000 -0400
+@@ -23,6 +23,8 @@
+ #include "okclient.h"
+ #include "droproot.h"
+ 
++char ignoreip[4];
++
+ static int packetquery(char *buf,unsigned int len,char **q,char qtype[2],char qclass[2],char id[2])
+ {
+   unsigned int pos;
+@@ -431,6 +433,11 @@
+   if (!cache_init(cachesize))
+     strerr_die3x(111,FATAL,"not enough memory for cache of size ",x);
+ 
++  x = env_get("IGNOREIP");
++  if (x)
++    if (!ip4_scan(x,ignoreip))
++      strerr_die3x(111,FATAL,"unable to parse IGNOREIP address ",x);
++
+   if (env_get("HIDETTL"))
+     response_hidettl();
+   if (env_get("FORWARDONLY"))
+diff -u orig/query.c ./query.c
+--- orig/query.c	2001-02-11 16:11:45.000000000 -0500
++++ ./query.c	2003-09-15 23:22:13.000000000 -0400
+@@ -13,6 +13,8 @@
+ #include "response.h"
+ #include "query.h"
+ 
++extern char ignoreip[];
++
+ static int flagforwardonly = 0;
+ 
+ void query_forwardonly(void)
+@@ -643,6 +645,8 @@
+         pos = dns_packet_copy(buf,len,pos,header,10); if (!pos) goto DIE;
+         if (byte_equal(header + 8,2,"\0\4")) {
+           pos = dns_packet_copy(buf,len,pos,header,4); if (!pos) goto DIE;
++	  /*          if (*ignoreip) if (byte_equal(header,4,ignoreip)) goto NXDOMAIN;*/
++          if (*ignoreip) if (byte_equal(header,4,ignoreip)) goto NXDOMAIN;
+           save_data(header,4);
+           log_rr(whichserver,t1,DNS_T_A,header,4,ttl);
+         }
