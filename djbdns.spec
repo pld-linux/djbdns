@@ -12,6 +12,7 @@ Patch0:		dnscache-1.05-multiple-ip.patch
 Patch1:		http://www.fefe.de/dns/%{name}-1.05-ipv6.diff
 #		based on http://www.ohse.de/uwe/patches/djbdns-1.05-multiip.diff
 Patch2:		%{name}-1.05-multiip.diff
+Patch3:		http://iksz.hu/package/djbdns-conf/djbdns-1.05-multi_tinydns_data.patch
 URL:		http://cr.yp.to/djbdns.html
 Prereq:		shadow
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -236,6 +237,7 @@ informacji.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 cd doc
 ln -s merge/djbdns/* .
 
