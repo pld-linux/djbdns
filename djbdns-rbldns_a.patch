@@ -1,3 +1,24 @@
+This tiny patch to rbldns adds records for the root of the zone.  That
+is, if the rbldns zone is bad.example.com, with entries like
+3.0.0.127.bad.example.com, you can now also have A and TXT records for
+plain bad.example.com.  I did this for my korea.services.net zone,
+since potential users keep typing korea.services.net into their web
+browsers and expecting something useful to happen.
+
+There's one new record type in the data file, a line starting with an
+exclamation point, in the same format as the colon record, e.g.
+
+  !10.11.12.13:See http://bad.example.com
+
+(Unlike in a colon record, a $ at the end of the text isn't special.)
+
+No warranty expressed or implied.  If you find bugs, feel free to fix
+them.
+			- John Levine, May 2002
+
+--- patch begins here ---
+
+
 diff -c djbdns-1.05-dist/rbldns-data.c djbdns-1.05/rbldns-data.c
 *** djbdns-1.05-dist/rbldns-data.c	Sun Feb 11 16:11:45 2001
 --- djbdns-1.05/rbldns-data.c	Sat May 18 20:04:33 2002
