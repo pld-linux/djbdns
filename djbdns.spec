@@ -11,6 +11,7 @@ Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
 Source1:	%{name}-doc.tar.gz
 Patch0:		dnscache-1.05-multiple-ip.patch
 URL:		http://cr.yp.to/djbdns.html
+Requires:	daemontools
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
