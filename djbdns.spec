@@ -2,13 +2,14 @@ Summary:     	DJB DNS
 Summary(pl): 	DJB DNS
 Name:        	djbdns
 Version:     	1.05
-Release:     	1
+Release:     	2
 Group:       	Networking/Daemons
 Group(pl):   	Sieciowe/Serwery
 Copyright:   	GPL
 URL:         	http://cr.yp.to/djbdns.html
 Source0:      	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
 Source1:	%{name}-doc.tar.gz
+Patch0:		dnscache-1.05-multiple-ip.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -19,6 +20,8 @@ Narzêdzia DJB do obs³ugi DNS.
 
 %prep
 %setup -q
+%patch0 -p1
+
 tar zxf %{SOURCE1}
 cd doc
 ln -s merge/djbdns/* .
@@ -31,8 +34,9 @@ echo /usr >conf-home
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir}}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_sysconfdir}}
 
+install dnsroots.global $RPM_BUILD_ROOT%{_sysconfdir}
 install	axfr-get	$RPM_BUILD_ROOT%{_bindir}
 install axfrdns		$RPM_BUILD_ROOT%{_bindir}
 install axfrdns-conf	$RPM_BUILD_ROOT%{_bindir}
@@ -64,7 +68,7 @@ install tinydns-get	$RPM_BUILD_ROOT%{_bindir}
 install walldns		$RPM_BUILD_ROOT%{_bindir}
 install walldns-conf	$RPM_BUILD_ROOT%{_bindir}
 
-gzip -9nf CHANGES README SYSDEPS TARGETS TODO VERSION
+gzip -9nf CHANGES README SYSDEPS TARGETS TODO VERSION MULTIPLEIP
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -73,3 +77,4 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc *.gz ../doc/
 %attr(755,root,root) %{_bindir}/*
+%attr(644,root,root) %{_sysconfdir}/*
