@@ -1,0 +1,1192 @@
+diff -uNr djbdns-1.05/FILES djbdns-1.05-fefe/FILES
+--- djbdns-1.05/FILES	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/FILES	Tue Feb 13 15:16:12 2001
+@@ -135,6 +135,7 @@
+ exit.h
+ fmt.h
+ fmt_ulong.c
++fmt_xlong.c
+ gen_alloc.h
+ gen_allocdefs.h
+ getln.c
+@@ -151,6 +152,9 @@
+ ip4.h
+ ip4_fmt.c
+ ip4_scan.c
++ip6.h
++ip6_fmt.c
++ip6_scan.c
+ ndelay.h
+ ndelay_off.c
+ ndelay_on.c
+@@ -164,6 +168,7 @@
+ readclose.c
+ readclose.h
+ scan.h
++scan_0x.c
+ scan_ulong.c
+ seek.h
+ seek_set.c
+@@ -241,3 +246,4 @@
+ warn-shsgr
+ buffer_read.c
+ buffer_write.c
++dns_nd6.c
+diff -uNr djbdns-1.05/Makefile djbdns-1.05-fefe/Makefile
+--- djbdns-1.05/Makefile	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/Makefile	Tue Feb 13 15:16:12 2001
+@@ -120,12 +120,13 @@
+ case_diffb.o case_diffs.o case_lowerb.o fmt_ulong.o ip4_fmt.o \
+ ip4_scan.o scan_ulong.o str_chr.o str_diff.o str_len.o str_rchr.o \
+ str_start.o uint16_pack.o uint16_unpack.o uint32_pack.o \
+-uint32_unpack.o
++uint32_unpack.o ip6_fmt.o ip6_scan.o scan_0x.o fmt_xlong.o
+ 	./makelib byte.a byte_chr.o byte_copy.o byte_cr.o \
+ 	byte_diff.o byte_zero.o case_diffb.o case_diffs.o \
+ 	case_lowerb.o fmt_ulong.o ip4_fmt.o ip4_scan.o scan_ulong.o \
+ 	str_chr.o str_diff.o str_len.o str_rchr.o str_start.o \
+-	uint16_pack.o uint16_unpack.o uint32_pack.o uint32_unpack.o
++	uint16_pack.o uint16_unpack.o uint32_pack.o uint32_unpack.o \
++	ip6_fmt.o ip6_scan.o scan_0x.o fmt_xlong.o
+ 
+ byte_chr.o: \
+ compile byte_chr.c byte.h
+@@ -228,11 +229,13 @@
+ dns.a: \
+ makelib dns_dfd.o dns_domain.o dns_dtda.o dns_ip.o dns_ipq.o dns_mx.o \
+ dns_name.o dns_nd.o dns_packet.o dns_random.o dns_rcip.o dns_rcrw.o \
+-dns_resolve.o dns_sortip.o dns_transmit.o dns_txt.o
++dns_resolve.o dns_sortip.o dns_transmit.o dns_txt.o dns_ip6.o \
++dns_sortip6.o dns_nd6.o
+ 	./makelib dns.a dns_dfd.o dns_domain.o dns_dtda.o dns_ip.o \
+ 	dns_ipq.o dns_mx.o dns_name.o dns_nd.o dns_packet.o \
+ 	dns_random.o dns_rcip.o dns_rcrw.o dns_resolve.o \
+-	dns_sortip.o dns_transmit.o dns_txt.o
++	dns_sortip.o dns_transmit.o dns_txt.o dns_ip6.o dns_sortip6.o \
++	dns_nd6.o
+ 
+ dns_dfd.o: \
+ compile dns_dfd.c error.h alloc.h byte.h dns.h stralloc.h gen_alloc.h \
+@@ -254,6 +257,11 @@
+ stralloc.h iopause.h taia.h tai.h uint64.h taia.h
+ 	./compile dns_ip.c
+ 
++dns_ip6.o: \
++compile dns_ip6.c stralloc.h gen_alloc.h uint16.h byte.h dns.h \
++stralloc.h iopause.h taia.h tai.h uint64.h taia.h
++	./compile dns_ip6.c
++
+ dns_ipq.o: \
+ compile dns_ipq.c stralloc.h gen_alloc.h case.h byte.h str.h dns.h \
+ stralloc.h iopause.h taia.h tai.h uint64.h taia.h
+@@ -274,6 +282,11 @@
+ taia.h tai.h uint64.h taia.h
+ 	./compile dns_nd.c
+ 
++dns_nd6.o: \
++compile dns_nd6.c byte.h fmt.h dns.h stralloc.h gen_alloc.h iopause.h \
++taia.h tai.h uint64.h taia.h
++	./compile dns_nd6.c
++
+ dns_packet.o: \
+ compile dns_packet.c error.h dns.h stralloc.h gen_alloc.h iopause.h \
+ taia.h tai.h uint64.h taia.h
+@@ -306,6 +319,11 @@
+ taia.h tai.h uint64.h taia.h
+ 	./compile dns_sortip.c
+ 
++dns_sortip6.o: \
++compile dns_sortip6.c byte.h dns.h stralloc.h gen_alloc.h iopause.h \
++taia.h tai.h uint64.h taia.h
++	./compile dns_sortip6.c
++
+ dns_transmit.o: \
+ compile dns_transmit.c socket.h uint16.h alloc.h error.h byte.h \
+ uint16.h dns.h stralloc.h gen_alloc.h iopause.h taia.h tai.h uint64.h \
+@@ -369,6 +387,17 @@
+ gen_alloc.h iopause.h taia.h tai.h uint64.h taia.h
+ 	./compile dnsip.c
+ 
++dnsip6: \
++load dnsip6.o iopause.o dns.a env.a libtai.a alloc.a buffer.a unix.a \
++byte.a socket.lib
++	./load dnsip6 iopause.o dns.a env.a libtai.a alloc.a \
++	buffer.a unix.a byte.a  `cat socket.lib`
++
++dnsip6.o: \
++compile dnsip6.c buffer.h exit.h strerr.h ip6.h dns.h stralloc.h \
++gen_alloc.h iopause.h taia.h tai.h uint64.h
++	./compile dnsip6.c
++
+ dnsipq: \
+ load dnsipq.o iopause.o dns.a env.a libtai.a alloc.a buffer.a unix.a \
+ byte.a socket.lib
+@@ -399,7 +428,7 @@
+ 
+ dnsname.o: \
+ compile dnsname.c buffer.h exit.h strerr.h ip4.h dns.h stralloc.h \
+-gen_alloc.h iopause.h taia.h tai.h uint64.h taia.h
++gen_alloc.h iopause.h taia.h tai.h uint64.h taia.h ip6.h
+ 	./compile dnsname.c
+ 
+ dnsq: \
+@@ -484,6 +513,10 @@
+ compile fmt_ulong.c fmt.h
+ 	./compile fmt_ulong.c
+ 
++fmt_xlong.o: \
++compile fmt_xlong.c scan.h
++	./compile fmt_xlong.c
++
+ generic-conf.o: \
+ compile generic-conf.c strerr.h buffer.h open.h generic-conf.h \
+ buffer.h
+@@ -546,10 +579,18 @@
+ compile ip4_fmt.c fmt.h ip4.h
+ 	./compile ip4_fmt.c
+ 
++ip6_fmt.o: \
++compile ip6_fmt.c fmt.h ip6.h
++	./compile ip6_fmt.c
++
+ ip4_scan.o: \
+ compile ip4_scan.c scan.h ip4.h
+ 	./compile ip4_scan.c
+ 
++ip6_scan.o: \
++compile ip6_scan.c scan.h ip6.h
++	./compile ip6_scan.c
++
+ it: \
+ prog install instcheck
+ 
+@@ -677,7 +718,7 @@
+ rbldns-data pickdns-conf pickdns pickdns-data tinydns-conf tinydns \
+ tinydns-data tinydns-get tinydns-edit axfr-get axfrdns-conf axfrdns \
+ dnsip dnsipq dnsname dnstxt dnsmx dnsfilter random-ip dnsqr dnsq \
+-dnstrace dnstracesort cachetest utime rts
++dnstrace dnstracesort cachetest utime rts dnsip6
+ 
+ prot.o: \
+ compile prot.c hasshsgr.h prot.h
+@@ -762,6 +803,10 @@
+ compile scan_ulong.c scan.h
+ 	./compile scan_ulong.c
+ 
++scan_0x.o: \
++compile scan_0x.c scan.h
++	./compile scan_0x.c
++
+ seek_set.o: \
+ compile seek_set.c seek.h
+ 	./compile seek_set.c
+@@ -1005,7 +1050,7 @@
+ compile tinydns-data.c uint16.h uint32.h str.h byte.h fmt.h ip4.h \
+ exit.h case.h scan.h buffer.h strerr.h getln.h buffer.h stralloc.h \
+ gen_alloc.h cdb_make.h buffer.h uint32.h stralloc.h open.h dns.h \
+-stralloc.h iopause.h taia.h tai.h uint64.h taia.h
++stralloc.h iopause.h taia.h tai.h uint64.h taia.h ip6.h
+ 	./compile tinydns-data.c
+ 
+ tinydns-edit: \
+@@ -1104,3 +1149,6 @@
+ compile walldns.c byte.h dns.h stralloc.h gen_alloc.h iopause.h \
+ taia.h tai.h uint64.h taia.h dd.h response.h uint32.h
+ 	./compile walldns.c
++
++clean:
++	rm -f `cat TARGETS`
+diff -uNr djbdns-1.05/TARGETS djbdns-1.05-fefe/TARGETS
+--- djbdns-1.05/TARGETS	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/TARGETS	Tue Feb 13 15:16:12 2001
+@@ -214,3 +214,12 @@
+ it
+ setup
+ check
++scan_0x.o
++fmt_xlong.o
++ip6_scan.o
++ip6_fmt.o
++dnsip6.o
++dns_ip6.o
++dns_sortip6.o
++dnsip6
++dns_nd6.o
+diff -uNr djbdns-1.05/axfr-get.c djbdns-1.05-fefe/axfr-get.c
+--- djbdns-1.05/axfr-get.c	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/axfr-get.c	Tue Feb 13 15:16:12 2001
+@@ -13,6 +13,7 @@
+ #include "byte.h"
+ #include "str.h"
+ #include "ip4.h"
++#include "ip6.h"
+ #include "timeoutread.h"
+ #include "timeoutwrite.h"
+ #include "dns.h"
+@@ -217,6 +218,14 @@
+     x_copy(buf,len,pos,data,4);
+     if (!stralloc_catb(&line,ipstr,ip4_fmt(ipstr,data))) return 0;
+   }
++  else if (byte_equal(data,2,DNS_T_AAAA)) {
++    char ipstr[IP6_FMT];
++    if (!stralloc_copys(&line,"6")) return 0;
++    if (!dns_domain_todot_cat(&line,d1)) return 0;
++    if (!stralloc_cats(&line,":")) return 0;
++    x_copy(buf,len,pos,data,16);
++    if (!stralloc_catb(&line,ipstr,ip6_fmt_flat(ipstr,data))) return 0;
++  }
+   else {
+     unsigned char ch;
+     unsigned char ch2;
+diff -uNr djbdns-1.05/dns.h djbdns-1.05-fefe/dns.h
+--- djbdns-1.05/dns.h	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/dns.h	Tue Feb 13 15:16:12 2001
+@@ -68,6 +68,8 @@
+ 
+ extern int dns_ip4_packet(stralloc *,const char *,unsigned int);
+ extern int dns_ip4(stralloc *,const stralloc *);
++extern int dns_ip6_packet(stralloc *,char *,unsigned int);
++extern int dns_ip6(stralloc *,stralloc *);
+ extern int dns_name_packet(stralloc *,const char *,unsigned int);
+ extern void dns_name4_domain(char *,const char *);
+ #define DNS_NAME4_DOMAIN 31
+@@ -80,5 +82,10 @@
+ extern int dns_resolvconfrewrite(stralloc *);
+ extern int dns_ip4_qualify_rules(stralloc *,stralloc *,const stralloc *,const stralloc *);
+ extern int dns_ip4_qualify(stralloc *,stralloc *,const stralloc *);
++extern int dns_ip6_qualify_rules(stralloc *,stralloc *,stralloc *,stralloc *);
++extern int dns_ip6_qualify(stralloc *,stralloc *,stralloc *);
++
++extern int dns_name6_domain(char *,char *);
++#define DNS_NAME6_DOMAIN (4*16+15)
+ 
+ #endif
+diff -uNr djbdns-1.05/dns_ip6.c djbdns-1.05-fefe/dns_ip6.c
+--- djbdns-1.05/dns_ip6.c	Thu Jan  1 01:00:00 1970
++++ djbdns-1.05-fefe/dns_ip6.c	Tue Feb 13 15:16:12 2001
+@@ -0,0 +1,91 @@
++#include "stralloc.h"
++#include "uint16.h"
++#include "byte.h"
++#include "dns.h"
++#include "ip6.h"
++
++int dns_ip6_packet(stralloc *out,char *buf,unsigned int len)
++{
++  unsigned int pos;
++  char header[16];
++  uint16 numanswers;
++  uint16 datalen;
++
++  if (!stralloc_copys(out,"")) return -1;
++
++  pos = dns_packet_copy(buf,len,0,header,12); if (!pos) return -1;
++  uint16_unpack_big(header + 6,&numanswers);
++  pos = dns_packet_skipname(buf,len,pos); if (!pos) return -1;
++  pos += 4;
++
++  while (numanswers--) {
++    pos = dns_packet_skipname(buf,len,pos); if (!pos) return -1;
++    pos = dns_packet_copy(buf,len,pos,header,10); if (!pos) return -1;
++    uint16_unpack_big(header + 8,&datalen);
++    if (byte_equal(header,2,DNS_T_AAAA))
++      if (byte_equal(header + 2,2,DNS_C_IN))
++        if (datalen == 16) {
++	  if (!dns_packet_copy(buf,len,pos,header,16)) return -1;
++	  if (!stralloc_catb(out,header,16)) return -1;
++	}
++    pos += datalen;
++  }
++
++  dns_sortip6(out->s,out->len);
++  return 0;
++}
++
++static char *q = 0;
++
++int dns_ip6(stralloc *out,stralloc *fqdn)
++{
++  unsigned int i;
++  char code;
++  char ch;
++  char ip[16];
++
++  if (!stralloc_copys(out,"")) return -1;
++  if (!stralloc_readyplus(fqdn,1)) return -1;
++  fqdn->s[fqdn->len]=0;
++  if ((i=ip6_scan(fqdn->s,ip))) {
++    if (fqdn->s[i]) return -1;
++    stralloc_copyb(out,ip,16);
++    return 0;
++  }
++  if ((i=ip4_scan(fqdn->s,ip+12))) {
++    if (fqdn->s[i]) return -1;
++    byte_zero(ip,10);
++    ip[10]=ip[11]=0xff;
++    stralloc_copyb(out,ip,16);
++    return 0;
++  }
++  code = 0;
++  for (i = 0;i <= fqdn->len;++i) {
++    if (i < fqdn->len)
++      ch = fqdn->s[i];
++    else
++      ch = '.';
++
++    if ((ch == '[') || (ch == ']')) continue;
++    if (ch == '.') {
++      if (!stralloc_append(out,&code)) return -1;
++      code = 0;
++      continue;
++    }
++    if ((ch >= '0') && (ch <= '9')) {
++      code *= 10;
++      code += ch - '0';
++      continue;
++    }
++
++    if (!dns_domain_fromdot(&q,fqdn->s,fqdn->len)) return -1;
++    if (dns_resolve(q,DNS_T_AAAA) == -1) return -1;
++    if (dns_ip6_packet(out,dns_resolve_tx.packet,dns_resolve_tx.packetlen) == -1) return -1;
++    dns_transmit_free(&dns_resolve_tx);
++    dns_domain_free(&q);
++    return 0;
++  }
++
++  out->len &= ~3;
++  return 0;
++}
+diff -uNr djbdns-1.05/dns_name.c djbdns-1.05-fefe/dns_name.c
+--- djbdns-1.05/dns_name.c	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/dns_name.c	Tue Feb 13 15:16:12 2001
+@@ -2,6 +2,7 @@
+ #include "uint16.h"
+ #include "byte.h"
+ #include "dns.h"
++#include "ip6.h"
+ 
+ static char *q = 0;
+ 
+@@ -43,6 +44,20 @@
+   if (dns_resolve(name,DNS_T_PTR) == -1) return -1;
+   if (dns_name_packet(out,dns_resolve_tx.packet,dns_resolve_tx.packetlen) == -1) return -1;
+   dns_transmit_free(&dns_resolve_tx);
++  dns_domain_free(&q);
++  return 0;
++}
++
++int dns_name6(stralloc *out,char ip[16])
++{
++  char name[DNS_NAME6_DOMAIN];
++
++  if (ip6_isv4mapped(ip))
++    return dns_name4(out,ip+12);
++  dns_name6_domain(name,ip);
++  if (dns_resolve(name,DNS_T_PTR) == -1) return -1;
++  if (dns_name_packet(out,dns_resolve_tx.packet,dns_resolve_tx.packetlen) == -1) return -1;
++  dns_transmit_free(&dns_resolve_tx);
+   dns_domain_free(&q);
+   return 0;
+ }
+diff -uNr djbdns-1.05/dns_nd6.c djbdns-1.05-fefe/dns_nd6.c
+--- djbdns-1.05/dns_nd6.c	Thu Jan  1 01:00:00 1970
++++ djbdns-1.05-fefe/dns_nd6.c	Tue Feb 13 15:16:12 2001
+@@ -0,0 +1,28 @@
++#include "byte.h"
++#include "fmt.h"
++#include "dns.h"
++
++/* RFC1886:
++ *   4321:0:1:2:3:4:567:89ab
++ * ->
++ *   b.a.9.8.7.6.5.0.4.0.0.0.3.0.0.0.2.0.0.0.1.0.0.0.0.0.0.0.1.2.3.4.IP6.INT.
++ */
++
++unsigned int mkint(unsigned char a,unsigned char b) {
++  return ((unsigned int)a << 8) + (unsigned int)b;
++}
++
++int dns_name6_domain(char name[DNS_NAME6_DOMAIN],char ip[16])
++{
++  unsigned int j;
++
++  for (j=0; j<16; j++) {
++    name[j*4]=1;
++    name[j*4+1]=tohex(ip[15-j] & 15);
++    name[j*4+2]=1;
++    name[j*4+3]=tohex((unsigned char)ip[15-j] >> 4);
++  }
++  byte_copy(name + 4*16,14,"\3ip6\3int\0");
++  return 4*16+14;
++}
++
+diff -uNr djbdns-1.05/dns_sortip6.c djbdns-1.05-fefe/dns_sortip6.c
+--- djbdns-1.05/dns_sortip6.c	Thu Jan  1 01:00:00 1970
++++ djbdns-1.05-fefe/dns_sortip6.c	Tue Feb 13 15:16:12 2001
+@@ -0,0 +1,20 @@
++#include "byte.h"
++#include "dns.h"
++
++/* XXX: sort servers by configurable notion of closeness? */
++/* XXX: pay attention to competence of each server? */
++
++void dns_sortip6(char *s,unsigned int n)
++{
++  unsigned int i;
++  char tmp[16];
++
++  n >>= 4;
++  while (n > 1) {
++    i = dns_random(n);
++    --n;
++    byte_copy(tmp,14,s + (i << 4));
++    byte_copy(s + (i << 4),16,s + (n << 4));
++    byte_copy(s + (n << 4),16,tmp);
++  }
++}
+diff -uNr djbdns-1.05/dnsip6.c djbdns-1.05-fefe/dnsip6.c
+--- djbdns-1.05/dnsip6.c	Thu Jan  1 01:00:00 1970
++++ djbdns-1.05-fefe/dnsip6.c	Tue Feb 13 15:16:12 2001
+@@ -0,0 +1,40 @@
++#include "buffer.h"
++#include "exit.h"
++#include "strerr.h"
++#include "ip6.h"
++#include "dns.h"
++
++#define FATAL "dnsip: fatal: "
++
++static char seed[128];
++
++static stralloc fqdn;
++static stralloc out;
++char str[IP6_FMT];
++
++main(int argc,char **argv)
++{
++  int i;
++
++  dns_random_init(seed);
++
++  if (*argv) ++argv;
++
++  while (*argv) {
++    if (!stralloc_copys(&fqdn,*argv))
++      strerr_die2x(111,FATAL,"out of memory");
++    if (dns_ip6(&out,&fqdn) == -1)
++      strerr_die4sys(111,FATAL,"unable to find IPv6 address for ",*argv,": ");
++
++    for (i = 0;i + 16 <= out.len;i += 16) {
++      buffer_put(buffer_1,str,ip6_fmt(str,out.s + i));
++      buffer_puts(buffer_1," ");
++    }
++    buffer_puts(buffer_1,"\n");
++
++    ++argv;
++  }
++
++  buffer_flush(buffer_1);
++  _exit(0);
++}
+diff -uNr djbdns-1.05/dnsname.c djbdns-1.05-fefe/dnsname.c
+--- djbdns-1.05/dnsname.c	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/dnsname.c	Tue Feb 13 15:16:12 2001
+@@ -9,6 +9,7 @@
+ static char seed[128];
+ 
+ char ip[4];
++char ip6[16];
+ static stralloc out;
+ 
+ int main(int argc,char **argv)
+@@ -18,10 +19,15 @@
+   if (*argv) ++argv;
+ 
+   while (*argv) {
+-    if (!ip4_scan(*argv,ip))
+-      strerr_die3x(111,FATAL,"unable to parse IP address ",*argv);
+-    if (dns_name4(&out,ip) == -1)
+-      strerr_die4sys(111,FATAL,"unable to find host name for ",*argv,": ");
++    if (ip6_scan(*argv,ip6)) {
++      if (dns_name6(&out,ip6) == -1)
++	strerr_die4sys(111,FATAL,"unable to find host name for ",*argv,": ");
++    } else {
++      if (!ip4_scan(*argv,ip))
++	strerr_die3x(111,FATAL,"unable to parse IP address ",*argv);
++      if (dns_name4(&out,ip) == -1)
++	strerr_die4sys(111,FATAL,"unable to find host name for ",*argv,": ");
++    }
+ 
+     buffer_put(buffer_1,out.s,out.len);
+     buffer_puts(buffer_1,"\n");
+diff -uNr djbdns-1.05/fmt_xlong.c djbdns-1.05-fefe/fmt_xlong.c
+--- djbdns-1.05/fmt_xlong.c	Thu Jan  1 01:00:00 1970
++++ djbdns-1.05-fefe/fmt_xlong.c	Tue Feb 13 15:16:12 2001
+@@ -0,0 +1,22 @@
++#include "fmt.h"
++
++char tohex(char num) {
++  if (num<10)
++    return num+'0';
++  else if (num<16)
++    return num-10+'a';
++  else
++    return -1;
++}
++
++unsigned int fmt_xlong(register char *s,register unsigned long u)
++{
++  register unsigned int len; register unsigned long q;
++  len = 1; q = u;
++  while (q > 15) { ++len; q /= 16; }
++  if (s) {
++    s += len;
++    do { *--s = tohex(u % 16); u /= 16; } while(u); /* handles u == 0 */
++  }
++  return len;
++}
+diff -uNr djbdns-1.05/hier.c djbdns-1.05-fefe/hier.c
+--- djbdns-1.05/hier.c	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/hier.c	Tue Feb 13 15:16:12 2001
+@@ -29,6 +29,7 @@
+   c(auto_home,"bin","axfr-get",-1,-1,0755);
+ 
+   c(auto_home,"bin","dnsip",-1,-1,0755);
++  c(auto_home,"bin","dnsip6",-1,-1,0755);
+   c(auto_home,"bin","dnsipq",-1,-1,0755);
+   c(auto_home,"bin","dnsname",-1,-1,0755);
+   c(auto_home,"bin","dnstxt",-1,-1,0755);
+diff -uNr djbdns-1.05/ip6.h djbdns-1.05-fefe/ip6.h
+--- djbdns-1.05/ip6.h	Thu Jan  1 01:00:00 1970
++++ djbdns-1.05-fefe/ip6.h	Tue Feb 13 15:16:12 2001
+@@ -0,0 +1,28 @@
++#ifndef IP6_H
++#define IP6_H
++
++extern unsigned int ip6_scan(char *,char *);
++extern unsigned int ip6_fmt(char *,char *);
++
++extern unsigned int ip6_scan_flat(char *,char *);
++extern unsigned int ip6_fmt_flat(char *,char *);
++
++/*
++ ip6 address syntax: (h = hex digit), no leading '0' required
++   1. hhhh:hhhh:hhhh:hhhh:hhhh:hhhh:hhhh:hhhh
++   2. any number of 0000 may be abbreviated as "::", but only once
++ flat ip6 address syntax:
++   hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
++ */
++
++#define IP6_FMT 40
++
++const static unsigned char V4mappedprefix[12]={0,0,0,0,0,0,0,0,0,0,0xff,0xff};
++const static unsigned char V6loopback[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
++const static unsigned char V6any[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
++
++#define ip6_isv4mapped(ip) (byte_equal(ip,12,V4mappedprefix))
++
++const static char ip4loopback[4] = {127,0,0,1};
++
++#endif
+diff -uNr djbdns-1.05/ip6_fmt.c djbdns-1.05-fefe/ip6_fmt.c
+--- djbdns-1.05/ip6_fmt.c	Thu Jan  1 01:00:00 1970
++++ djbdns-1.05-fefe/ip6_fmt.c	Tue Feb 13 15:16:12 2001
+@@ -0,0 +1,55 @@
++#include "fmt.h"
++#include "ip6.h"
++#include <stdio.h>
++
++unsigned int ip6_fmt(char *s,char ip[16])
++{
++  unsigned int len;
++  unsigned int i;
++ 
++  len = 0;
++  i = fmt_xlong(s,((unsigned long) (unsigned char) ip[0] << 8) +
++		   (unsigned long) (unsigned char) ip[1]); len += i; if (s) s += i;
++  if (s) *s++ = ':'; ++len;
++  i = fmt_xlong(s,((unsigned long) (unsigned char) ip[2] << 8) +
++		   (unsigned long) (unsigned char) ip[3]); len += i; if (s) s += i;
++  if (s) *s++ = ':'; ++len;
++  i = fmt_xlong(s,((unsigned long) (unsigned char) ip[4] << 8) +
++		   (unsigned long) (unsigned char) ip[5]); len += i; if (s) s += i;
++  if (s) *s++ = ':'; ++len;
++  i = fmt_xlong(s,((unsigned long) (unsigned char) ip[6] << 8) +
++		   (unsigned long) (unsigned char) ip[7]); len += i; if (s) s += i;
++  if (s) *s++ = ':'; ++len;
++  i = fmt_xlong(s,((unsigned long) (unsigned char) ip[8] << 8) +
++		   (unsigned long) (unsigned char) ip[9]); len += i; if (s) s += i;
++  if (s) *s++ = ':'; ++len;
++  i = fmt_xlong(s,((unsigned long) (unsigned char) ip[10] << 8) +
++		   (unsigned long) (unsigned char) ip[11]); len += i; if (s) s += i;
++  if (s) *s++ = ':'; ++len;
++  i = fmt_xlong(s,((unsigned long) (unsigned char) ip[12] << 8) +
++		   (unsigned long) (unsigned char) ip[13]); len += i; if (s) s += i;
++  if (s) *s++ = ':'; ++len;
++  i = fmt_xlong(s,((unsigned long) (unsigned char) ip[14] << 8) +
++		   (unsigned long) (unsigned char) ip[15]); len += i; if (s) s += i;
++  if (s) *s=0;
++  return len;
++}
++
++static char tohex(char num) {
++  if (num<10)
++    return num+'0';
++  else if (num<16)
++    return num-10+'a';
++  else
++    return -1;
++}
++
++unsigned int ip6_fmt_flat(char *s,char ip[16])
++{
++  int i;
++  for (i=0; i<16; i++) {
++    *s++=tohex((unsigned char)ip[i] >> 4);
++    *s++=tohex((unsigned char)ip[i] & 15);
++  }
++  return 32;
++}
+diff -uNr djbdns-1.05/ip6_scan.c djbdns-1.05-fefe/ip6_scan.c
+--- djbdns-1.05/ip6_scan.c	Thu Jan  1 01:00:00 1970
++++ djbdns-1.05-fefe/ip6_scan.c	Tue Feb 13 15:16:12 2001
+@@ -0,0 +1,110 @@
++#include "scan.h"
++#include "ip4.h"
++#include "ip6.h"
++
++/*
++ * IPv6 addresses are really ugly to parse.
++ * Syntax: (h = hex digit)
++ *   1. hhhh:hhhh:hhhh:hhhh:hhhh:hhhh:hhhh:hhhh
++ *   2. any number of 0000 may be abbreviated as "::", but only once
++ *   3. The last two words may be written as IPv4 address
++ */
++
++unsigned int ip6_scan(char *s,char ip[16])
++{
++  unsigned int i;
++  unsigned int len=0;
++  unsigned int u;
++
++  char suffix[16];
++  int prefixlen=0;
++  int suffixlen=0;
++
++  for (i=0; i<16; i++) ip[i]=0;
++
++  for (;;) {
++    if (*s == ':') {
++      len++;
++      if (s[1] == ':') {	/* Found "::", skip to part 2 */
++	s+=2;
++	len++;
++	break;
++      }
++      s++;
++    }
++    i = scan_0x(s,&u);
++    if (!i) return 0;
++    if (prefixlen==12 && s[i]=='.') {
++      /* the last 4 bytes may be written as IPv4 address */
++      i=ip4_scan(s,ip+12);
++      if (i)
++	return i+len;
++      else
++	return 0;
++    }
++    ip[prefixlen++] = (u >> 8);
++    ip[prefixlen++] = (u & 255);
++    s += i; len += i;
++    if (prefixlen==16)
++      return len;
++  }
++
++/* part 2, after "::" */
++  for (;;) {
++    if (*s == ':') {
++      if (suffixlen==0)
++	break;
++      s++;
++      len++;
++    } else if (suffixlen!=0)
++      break;
++    i = scan_0x(s,&u);
++    if (!i) {
++      len--;
++      break;
++    }
++    if (suffixlen+prefixlen<=12 && s[i]=='.') {
++      int j=ip4_scan(s,suffix+suffixlen);
++      if (j) {
++	suffixlen+=4;
++	len+=j;
++	break;
++      } else
++	prefixlen=12-suffixlen;	/* make end-of-loop test true */
++    }
++    suffix[suffixlen++] = (u >> 8);
++    suffix[suffixlen++] = (u & 255);
++    s += i; len += i;
++    if (prefixlen+suffixlen==16)
++      break;
++  }
++  for (i=0; i<suffixlen; i++)
++    ip[16-suffixlen+i] = suffix[i];
++  return len;
++}
++
++static long int fromhex(unsigned char c) {
++  if (c>='0' && c<='9')
++    return c-'0';
++  else if (c>='A' && c<='F')
++    return c-'A'+10;
++  else if (c>='a' && c<='f')
++    return c-'a'+10;
++  return -1;
++}
++
++unsigned int ip6_scan_flat(char *s,char ip[16])
++{
++  int i;
++  char *old=s;
++  for (i=0; i<16; i++) {
++    int tmp;
++    tmp=fromhex(*s++);
++    if (tmp<0) return 0;
++    ip[i]=tmp << 4;
++    tmp=fromhex(*s++);
++    if (tmp<0) return 0;
++    ip[i]+=tmp;
++  }
++  return 32;
++}
+diff -uNr djbdns-1.05/printrecord.c djbdns-1.05-fefe/printrecord.c
+--- djbdns-1.05/printrecord.c	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/printrecord.c	Tue Feb 13 15:16:12 2001
+@@ -4,6 +4,7 @@
+ #include "byte.h"
+ #include "dns.h"
+ #include "printrecord.h"
++#include "ip6.h"
+ 
+ static char *d;
+ 
+@@ -82,6 +83,15 @@
+       if (!stralloc_catulong0(out,ch,0)) return 0;
+     }
+   }
++  else if (byte_equal(misc,2,DNS_T_AAAA)) {
++    char ip6str[IP6_FMT];
++    int stringlen;
++    if (datalen != 16) { errno = error_proto; return 0; }
++    if (!stralloc_cats(out," AAAA ")) return 0;
++    pos = dns_packet_copy(buf,len,pos,misc,16); if (!pos) return 0;
++    stringlen=ip6_fmt(ip6str,misc);
++    if (!stralloc_cats(out,ip6str)) return 0;
++  }
+   else {
+     if (!stralloc_cats(out," ")) return 0;
+     uint16_unpack_big(misc,&u16);
+diff -uNr djbdns-1.05/query.c djbdns-1.05-fefe/query.c
+--- djbdns-1.05/query.c	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/query.c	Tue Feb 13 15:16:12 2001
+@@ -227,6 +227,158 @@
+     return 1;
+   }
+ 
++  if (dns_domain_equal(d,"\0011\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\003ip6\003int\0")) {
++    if (z->level) goto LOWERLEVEL;
++    if (!rqa(z)) goto DIE;
++    if (typematch(DNS_T_PTR,dtype)) {
++      if (!response_rstart(d,DNS_T_PTR,"\0\0\0\0")) goto DIE;
++      if (!response_addname("\016ipv6-localhost\0")) goto DIE;
++      if (!response_addname("\015ipv6-loopback\0")) goto DIE;
++      response_rfinish(RESPONSE_ANSWER);
++    }
++    cleanup(z);
++    return 1;
++  }
++
++  if (dns_domain_equal(d,"\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\001e\001f\003ip6\003int\0")) {
++    if (z->level) goto LOWERLEVEL;
++    if (!rqa(z)) goto DIE;
++    if (typematch(DNS_T_PTR,dtype)) {
++      if (!response_rstart(d,DNS_T_PTR,"\0\0\0\0")) goto DIE;
++      if (!response_addname("\015ipv6-localnet\0")) goto DIE;
++      response_rfinish(RESPONSE_ANSWER);
++    }
++    cleanup(z);
++    return 1;
++  }
++
++  if (dns_domain_equal(d,"\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\001f\001f\003ip6\003int\0")) {
++    if (z->level) goto LOWERLEVEL;
++    if (!rqa(z)) goto DIE;
++    if (typematch(DNS_T_PTR,dtype)) {
++      if (!response_rstart(d,DNS_T_PTR,"\0\0\0\0")) goto DIE;
++      if (!response_addname("\020ipv6-mcastprefix\0")) goto DIE;
++      response_rfinish(RESPONSE_ANSWER);
++    }
++    cleanup(z);
++    return 1;
++  }
++
++  if (dns_domain_equal(d,"\0011\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0012\0010\001f\001f\003ip6\003int\0")) {
++    if (z->level) goto LOWERLEVEL;
++    if (!rqa(z)) goto DIE;
++    if (typematch(DNS_T_PTR,dtype)) {
++      if (!response_rstart(d,DNS_T_PTR,"\0\0\0\0")) goto DIE;
++      if (!response_addname("\015ipv6-allnodes\0")) goto DIE;
++      response_rfinish(RESPONSE_ANSWER);
++    }
++    cleanup(z);
++    return 1;
++  }
++
++  if (dns_domain_equal(d,"\0012\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0012\0010\001f\001f\003ip6\003int\0")) {
++    if (z->level) goto LOWERLEVEL;
++    if (!rqa(z)) goto DIE;
++    if (typematch(DNS_T_PTR,dtype)) {
++      if (!response_rstart(d,DNS_T_PTR,"\0\0\0\0")) goto DIE;
++      if (!response_addname("\017ipv6-allrouters\0")) goto DIE;
++      response_rfinish(RESPONSE_ANSWER);
++    }
++    cleanup(z);
++    return 1;
++  }
++
++  if (dns_domain_equal(d,"\0011\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0010\0012\0010\001f\001f\003ip6\003int\0")) {
++    if (z->level) goto LOWERLEVEL;
++    if (!rqa(z)) goto DIE;
++    if (typematch(DNS_T_PTR,dtype)) {
++      if (!response_rstart(d,DNS_T_PTR,"\0\0\0\0")) goto DIE;
++      if (!response_addname("\015ipv6-allhosts\0")) goto DIE;
++      response_rfinish(RESPONSE_ANSWER);
++    }
++    cleanup(z);
++    return 1;
++  }
++
++  if (dns_domain_equal(d,"\016ipv6-localhost\0") ||
++      dns_domain_equal(d,"\015ipv6-loopback\0"))
++    {
++      if (z->level) goto LOWERLEVEL;
++      if (!rqa(z)) goto DIE;
++      if (typematch(DNS_T_AAAA,dtype)) {
++	if (!response_rstart(d,DNS_T_AAAA,"\0\0\0\0")) goto DIE;
++	if (!response_addbytes("\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\001",16)) goto DIE;
++	response_rfinish(RESPONSE_ANSWER);
++      }
++      cleanup(z);
++      return 1;
++    }
++
++  if (dns_domain_equal(d,"\015ipv6-localnet\0"))
++    {
++      if (z->level) goto LOWERLEVEL;
++      if (!rqa(z)) goto DIE;
++      if (typematch(DNS_T_AAAA,dtype)) {
++	if (!response_rstart(d,DNS_T_AAAA,"\0\0\0\0")) goto DIE;
++	if (!response_addbytes("\376\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",16)) goto DIE;
++	response_rfinish(RESPONSE_ANSWER);
++      }
++      cleanup(z);
++      return 1;
++    }
++
++  if (dns_domain_equal(d,"\020ipv6-mcastprefix\0"))
++    {
++      if (z->level) goto LOWERLEVEL;
++      if (!rqa(z)) goto DIE;
++      if (typematch(DNS_T_AAAA,dtype)) {
++	if (!response_rstart(d,DNS_T_AAAA,"\0\0\0\0")) goto DIE;
++	if (!response_addbytes("\377\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",16)) goto DIE;
++	response_rfinish(RESPONSE_ANSWER);
++      }
++      cleanup(z);
++      return 1;
++    }
++
++  if (dns_domain_equal(d,"\15ipv6-allnodes\0"))
++    {
++      if (z->level) goto LOWERLEVEL;
++      if (!rqa(z)) goto DIE;
++      if (typematch(DNS_T_AAAA,dtype)) {
++	if (!response_rstart(d,DNS_T_AAAA,"\0\0\0\0")) goto DIE;
++	if (!response_addbytes("\377\002\000\000\000\000\000\000\000\000\000\000\000\000\000\001",16)) goto DIE;
++	response_rfinish(RESPONSE_ANSWER);
++      }
++      cleanup(z);
++      return 1;
++    }
++
++  if (dns_domain_equal(d,"\17ipv6-allrouters\0"))
++    {
++      if (z->level) goto LOWERLEVEL;
++      if (!rqa(z)) goto DIE;
++      if (typematch(DNS_T_AAAA,dtype)) {
++	if (!response_rstart(d,DNS_T_AAAA,"\0\0\0\0")) goto DIE;
++	if (!response_addbytes("\377\002\000\000\000\000\000\000\000\000\000\000\000\000\000\002",16)) goto DIE;
++	response_rfinish(RESPONSE_ANSWER);
++      }
++      cleanup(z);
++      return 1;
++    }
++
++  if (dns_domain_equal(d,"\15ipv6-allhosts\0"))
++    {
++      if (z->level) goto LOWERLEVEL;
++      if (!rqa(z)) goto DIE;
++      if (typematch(DNS_T_AAAA,dtype)) {
++	if (!response_rstart(d,DNS_T_AAAA,"\0\0\0\0")) goto DIE;
++	if (!response_addbytes("\377\002\000\000\000\000\000\000\000\000\000\000\000\000\000\003",16)) goto DIE;
++	response_rfinish(RESPONSE_ANSWER);
++      }
++      cleanup(z);
++      return 1;
++    }
++
+   if (dns_domain_equal(d,"\0011\0010\0010\003127\7in-addr\4arpa\0")) {
+     if (z->level) goto LOWERLEVEL;
+     if (!rqa(z)) goto DIE;
+diff -uNr djbdns-1.05/scan_0x.c djbdns-1.05-fefe/scan_0x.c
+--- djbdns-1.05/scan_0x.c	Thu Jan  1 01:00:00 1970
++++ djbdns-1.05-fefe/scan_0x.c	Tue Feb 13 15:16:12 2001
+@@ -0,0 +1,24 @@
++#include "scan.h"
++
++long int fromhex(unsigned char c) {
++  if (c>='0' && c<='9')
++    return c-'0';
++  else if (c>='A' && c<='F')
++    return c-'A'+10;
++  else if (c>='a' && c<='f')
++    return c-'a'+10;
++  return -1;
++}
++
++unsigned int scan_0x(register const char *s,register unsigned int *u)
++{
++  register unsigned int pos = 0;
++  register unsigned long result = 0;
++  register long int c;
++  while ((c = fromhex((unsigned char) (s[pos]))) >= 0) {
++    result = (result << 4) + c;
++    ++pos;
++  }
++  *u = result;
++  return pos;
++}
+diff -uNr djbdns-1.05/socket.h djbdns-1.05-fefe/socket.h
+--- djbdns-1.05/socket.h	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/socket.h	Tue Feb 13 15:16:12 2001
+@@ -5,17 +5,27 @@
+ 
+ extern int socket_tcp(void);
+ extern int socket_udp(void);
++extern int socket_tcp6(void);
++extern int socket_udp6(void);
+ 
+ extern int socket_connect4(int,const char *,uint16);
++extern int socket_connect6(int,char *,uint16);
+ extern int socket_connected(int);
+ extern int socket_bind4(int,char *,uint16);
+ extern int socket_bind4_reuse(int,char *,uint16);
++extern int socket_bind6(int,char *,uint16);
++extern int socket_bind6_reuse(int,char *,uint16);
+ extern int socket_listen(int,int);
+ extern int socket_accept4(int,char *,uint16 *);
++extern int socket_accept6(int,char *,uint16 *);
+ extern int socket_recv4(int,char *,int,char *,uint16 *);
+ extern int socket_send4(int,const char *,int,const char *,uint16);
++extern int socket_recv6(int,char *,int,char *,uint16 *);
++extern int socket_send6(int,char *,int,char *,uint16);
+ extern int socket_local4(int,char *,uint16 *);
+ extern int socket_remote4(int,char *,uint16 *);
++extern int socket_local6(int,char *,uint16 *);
++extern int socket_remote6(int,char *,uint16 *);
+ 
+ extern void socket_tryreservein(int,int);
+ 
+diff -uNr djbdns-1.05/tinydns-conf.c djbdns-1.05-fefe/tinydns-conf.c
+--- djbdns-1.05/tinydns-conf.c	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/tinydns-conf.c	Tue Feb 13 15:16:12 2001
+@@ -82,6 +82,18 @@
+   finish();
+   perm(0755);
+ 
++  start("root/add-host6");
++  outs("#!/bin/sh\nexec ");
++  outs(auto_home); outs("/bin/tinydns-edit data data.new add host6 ${1+\"$@\"}\n");
++  finish();
++  perm(0755);
++
++  start("root/add-alias6");
++  outs("#!/bin/sh\nexec ");
++  outs(auto_home); outs("/bin/tinydns-edit data data.new add alias6 ${1+\"$@\"}\n");
++  finish();
++  perm(0755);
++
+   start("root/add-mx");
+   outs("#!/bin/sh\nexec ");
+   outs(auto_home); outs("/bin/tinydns-edit data data.new add mx ${1+\"$@\"}\n");
+diff -uNr djbdns-1.05/tinydns-data.c djbdns-1.05-fefe/tinydns-data.c
+--- djbdns-1.05/tinydns-data.c	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/tinydns-data.c	Tue Feb 13 15:16:12 2001
+@@ -8,6 +8,7 @@
+ #include "byte.h"
+ #include "fmt.h"
+ #include "ip4.h"
++#include "ip6.h"
+ #include "exit.h"
+ #include "case.h"
+ #include "scan.h"
+@@ -172,6 +173,7 @@
+ static char *d1;
+ static char *d2;
+ char dptr[DNS_NAME4_DOMAIN];
++char d6ptr[DNS_NAME6_DOMAIN];
+ 
+ char strnum[FMT_ULONG];
+ 
+@@ -193,6 +195,7 @@
+   char loc[2];
+   unsigned long u;
+   char ip[4];
++  char ip6[16];
+   char type[2];
+   char soa[20];
+   char buf[4];
+@@ -338,6 +341,28 @@
+ 	  }
+ 	}
+ 	break;
++
++      case '6': case '3':
++	if (!dns_domain_fromdot(&d1,f[0].s,f[0].len)) nomem();
++	if (!stralloc_0(&f[2])) nomem();
++	if (!scan_ulong(f[2].s,&ttl)) ttl = TTL_POSITIVE;
++	ttdparse(&f[3],ttd);
++	locparse(&f[4],loc);
++
++	if (!stralloc_0(&f[1])) nomem();
++	if (ip6_scan_flat(f[1].s,ip6)) {
++	  rr_start(DNS_T_AAAA,ttl,ttd,loc);
++	  rr_add(ip6,16);
++	  rr_finish(d1);
++
++	  if (line.s[0] == '6') {
++	    dns_name6_domain(d6ptr,ip6);
++	    rr_start(DNS_T_PTR,ttl,ttd,loc);
++	    rr_addname(d1);
++	    rr_finish(d6ptr);
++	  }
++	}
++	break;
+ 
+       case '@':
+ 	if (!dns_domain_fromdot(&d1,f[0].s,f[0].len)) nomem();
+diff -uNr djbdns-1.05/tinydns-edit.c djbdns-1.05-fefe/tinydns-edit.c
+--- djbdns-1.05/tinydns-edit.c	Sun Feb 11 22:11:45 2001
++++ djbdns-1.05-fefe/tinydns-edit.c	Tue Feb 13 15:16:12 2001
+@@ -13,6 +13,7 @@
+ #include "str.h"
+ #include "fmt.h"
+ #include "ip4.h"
++#include "ip6.h"
+ #include "dns.h"
+ 
+ #define FATAL "tinydns-edit: fatal: "
+@@ -25,7 +26,8 @@
+ 
+ void die_usage()
+ {
+-  strerr_die1x(100,"tinydns-edit: usage: tinydns-edit data data.new add [ns|childns|host|alias|mx] domain a.b.c.d");
++  strerr_die1x(100,"tinydns-edit: usage: tinydns-edit data data.new add [ns|childns|host|alias|mx] domain a.b.c.d\n"
++                   "tinydns-edit: usage: tinydns-edit data data.new add [host6|alias6] domain a:b:c:d:e:f:g:h");
+ }
+ void nomem()
+ {
+@@ -43,6 +45,7 @@
+ char mode;
+ static char *target;
+ char targetip[4];
++char targetip6[16];
+ 
+ int fd;
+ buffer b;
+@@ -61,7 +64,9 @@
+ static char *d1;
+ static char *d2;
+ char ip[4];
++char ip6[16];
+ char ipstr[IP4_FMT];
++char ip6str[IP6_FMT];
+ char strnum[FMT_ULONG];
+ 
+ static char *names[26];
+@@ -96,7 +101,9 @@
+   if (str_equal(*argv,"ns")) mode = '.';
+   else if (str_equal(*argv,"childns")) mode = '&';
+   else if (str_equal(*argv,"host")) mode = '=';
++  else if (str_equal(*argv,"host6")) mode = '6';
+   else if (str_equal(*argv,"alias")) mode = '+';
++  else if (str_equal(*argv,"alias6")) mode = '3';
+   else if (str_equal(*argv,"mx")) mode = '@';
+   else die_usage();
+ 
+@@ -104,7 +111,11 @@
+   if (!dns_domain_fromdot(&target,*argv,str_len(*argv))) nomem();
+ 
+   if (!*++argv) die_usage();
+-  if (!ip4_scan(*argv,targetip)) die_usage();
++  if (mode == '6' || mode == '3') {
++    if (!ip6_scan(*argv,targetip6)) die_usage();
++  } else {
++    if (!ip4_scan(*argv,targetip)) die_usage();
++  }
+ 
+   umask(077);
+ 
+@@ -129,7 +140,7 @@
+ 	if (!dns_domain_fromdot(&names[i],f[0].s,f[0].len)) nomem();
+       }
+       break;
+-    case '+': case '=':
++    case '+': case '=': case '6': case '3':
+       ttl = TTL_POSITIVE;
+       break;
+     case '@':
+@@ -203,6 +214,18 @@
+ 	}
+ 	break;
+ 
++      case '6':
++	if (line.s[0] == '6') {
++	  if (!dns_domain_fromdot(&d1,f[0].s,f[0].len)) nomem();
++	  if (dns_domain_equal(d1,target))
++	    strerr_die2x(100,FATAL,"host name already used");
++	  if (!stralloc_0(&f[1])) nomem();
++	  if (ip6_scan(f[1].s,ip6))
++	    if (byte_equal(ip,16,targetip6))
++	      strerr_die2x(100,FATAL,"IPv6 address already used");
++	}
++	break;
++
+       case '@':
+ 	if (line.s[0] == '@') {
+           if (!dns_domain_fromdot(&d1,f[0].s,f[0].len)) nomem();
+@@ -228,7 +251,11 @@
+   if (!stralloc_copyb(&f[0],&mode,1)) nomem();
+   if (!dns_domain_todot_cat(&f[0],target)) nomem();
+   if (!stralloc_cats(&f[0],":")) nomem();
+-  if (!stralloc_catb(&f[0],ipstr,ip4_fmt(ipstr,targetip))) nomem();
++  if (mode == '6' || mode == '3') {
++    if (!stralloc_catb(&f[0],ip6str,ip6_fmt_flat(ip6str,targetip6))) nomem();
++  } else {
++    if (!stralloc_catb(&f[0],ipstr,ip4_fmt(ipstr,targetip))) nomem();
++  }
+   switch(mode) {
+     case '.': case '&': case '@':
+       for (i = 0;i < 26;++i)
