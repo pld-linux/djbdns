@@ -2,7 +2,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	13
+Release:	14
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -11,6 +11,8 @@ Source1:	%{name}-doc.tar.gz
 # Source1-md5:	1d6aed1a5d3d3eda3958fa3e7d808fc8
 Source2:	ftp://ftp.innominate.org/gpa/djb/%{name}-%{version}-man.tar.gz
 # Source2-md5:	2b4e71fa4592858e4508538f78d50f61
+Source3:	http://www.sericyb.com.au/tinydns-notify
+# Source3-md5:	2213bdc8c58c10cb8770b7e5b0d67aea
 Patch0:		dnscache-1.05-multiple-ip.patch
 Patch1:		http://www.fefe.de/dns/%{name}-1.05-ipv6.diff
 #		based on http://www.ohse.de/uwe/patches/djbdns-1.05-multiip.diff
@@ -40,6 +42,7 @@ packages:
 
  - djbdns-dnscache - a local DNS cache
  - djbdns-tinydns - a DNS server
+ - djbdns-tinydns-notify - a tool to send NOTIFY requests
  - djbdns-pickdns - a DNS load-balancing server
  - djbdns-walldns - a reverse DNS wall
  - djbdns-rbldns - an IP-address-listing DNS server
@@ -71,6 +74,7 @@ nastêpuj±cych pakietów:
 
  - djbdns-dnscache - lokalny cache DNS
  - djbdns-tinydns - serwer DNS
+ - djbdns-tinydns-notify - narzêdzie do wysy³ania komunikatów NOTIFY
  - djbdns-pickdns - serwer DNS do równowa¿enia obci±¿eñ
  - djbdns-walldns - ¶ciana dla odwrotnych zapytañ DNS
  - djbdns-rbldns - serwer DNS list adresów IP
@@ -146,6 +150,31 @@ lokal-konfigurierten Informationen.
 tinydns jest serwerem DNS z pakietu djbdns. Przyjmuje on iteracyjne
 zapytania DNS od komputerów z ca³ego Internetu i odpowiada przy u¿yciu
 lokalnie skonfigurowanych informacji.
+
+%package tinydns-notify
+Summary:	DNS NOTIFY sending tool
+Summary(de):	DNS NOTIFY sending tool
+Summary(pl):	Narzêdzie do wysy³ania komunikatów DNS NOTIFY
+Group:		Networking/Daemons
+License:	Free to use
+URL:		http://www.sericyb.com.au/tinydns-notify
+PreReq:		%{name} = %{version}
+BuildRequires:	rpm-perlprov
+Requires:	perl-Socket
+Requires:	perl-Net-DNS
+BuildArch:	noarch
+Obsoletes:	tinydns-notify
+
+%description tinydns-notify
+tinydns-notify is a tool written in Perl, which extracts zones
+and their nameservers from tinydns-data files and sends DNS NOTIFY
+requests to nameservers listed in notify-list file.
+
+%description tinydns-notify -l pl
+tinydns-notify jest napisanym w Perlu narzedziem, ktore czyta
+pliki stref i odpowiadajace im serwery nazw z plikow tinydns-data,
+a nastepnie wysyla zadania NOTIFY do serwerow wyspecyfikowanych
+w pliku notify-list.
 
 %package pickdns
 Summary:	DJB's load-balancing DNS server
@@ -312,6 +341,8 @@ echo %{_prefix} > conf-home
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_sysconfdir}}
 install -d $RPM_BUILD_ROOT%{_mandir}/{man1,man5,man8}
+
+install %{SOURCE3}	$RPM_BUILD_ROOT%{_bindir}
 
 install dnsroots.global $RPM_BUILD_ROOT%{_sysconfdir}
 install	axfr-get	$RPM_BUILD_ROOT%{_bindir}
@@ -860,6 +891,10 @@ fi
 %attr(755,root,root) %{_sysconfdir}/tinydns/root/add-*
 %{_mandir}/man8/tinydns*
 /service/tinydns
+
+%files tinydns-notify
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/tinydns-notify
 
 %files pickdns
 %defattr(644,root,root,755)
