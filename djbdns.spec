@@ -21,16 +21,15 @@ DJB DNS Tools.
 Narzêdzia DJB do obs³ugi DNS.
 
 %prep
-%setup -q
+%setup -q -a1
 %patch0 -p1
 
-tar zxf %{SOURCE1}
 cd doc
 ln -s merge/djbdns/* .
 
 %build
 echo %{__cc} %{rpmcflags} >conf-cc
-echo /usr >conf-home
+echo %{_prefix} > conf-home
 %{__make} 
 
 %install
