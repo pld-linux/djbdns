@@ -604,6 +604,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc *.gz doc/*
 %attr(755,root,root) %{_bindir}/cachetest
 %attr(755,root,root) %{_bindir}/dns[f-t]*
+%attr(755,root,root) %{_bindir}/axfr-get
 
 %files -n dnscache
 %defattr(644,root,root,755)
@@ -627,7 +628,6 @@ rm -rf $RPM_BUILD_ROOT
 %files -n tinydns
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/tinydns*
-%attr(755,root,root) %{_bindir}/axfr-get
 %dir %attr(3755,root,root) %{_sysconfdir}/tinydns
 %dir %attr(2755,root,root) %{_sysconfdir}/tinydns/log
 %dir %attr(2755,dnslog,djbdns) %{_sysconfdir}/tinydns/log/main
