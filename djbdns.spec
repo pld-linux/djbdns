@@ -1,9 +1,14 @@
-# TODO: bcond patches
+# TODO
+#  - bcond patches
+#   - why bcond them?
+#  - warning: Installed (but unpackaged) file(s) found:
+#   /etc/rbldns/data
+#   /usr/bin/random-ip
 Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	18
+Release:	18.2
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -14,6 +19,8 @@ Source2:	ftp://ftp.innominate.org/gpa/djb/%{name}-%{version}-man.tar.gz
 # Source2-md5:	2b4e71fa4592858e4508538f78d50f61
 Source3:	http://www.sericyb.com.au/tinydns-notify
 # NoSource3-md5:	2213bdc8c58c10cb8770b7e5b0d67aea
+Source4:	http://www.sericyb.com.au/tinydns-log
+# NoSource4-md5:	a9af7707a7cb7c41e855f441e242e422
 Patch0:		dnscache-1.05-multiple-ip.patch
 # adds IPv6 support
 Patch1:		http://www.fefe.de/dns/%{name}-1.05-test21.diff.bz2
@@ -21,7 +28,7 @@ Patch3:		http://iksz.hu/package/djbdns-conf/djbdns-1.05-multi_tinydns_data.patch
 Patch4:		%{name}-srv.patch
 Patch5:		%{name}-glibc.patch
 # http://www.iecc.com/rbldns-patch.txt
-Patch6:         %{name}-rbldns_a.patch
+Patch6:		%{name}-rbldns_a.patch
 # http://core.segfault.pl/~hobbit/tinydns-include.patch
 Patch8:		%{name}-tinydns-include.patch
 URL:		http://cr.yp.to/djbdns.html
@@ -268,6 +275,7 @@ Requires:	daemontools >= 0.70-5
 Requires:	make
 Provides:	user(rbldns)
 Obsoletes:	rbldns
+#Obsoletes:	rbldnsd
 
 %description rbldns
 rbldns is an IP-address-listing DNS server from the djbdns package. It
@@ -348,6 +356,7 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_sysconfdir}}
 install -d $RPM_BUILD_ROOT%{_mandir}/{man1,man5,man8}
 
 install %{SOURCE3}	$RPM_BUILD_ROOT%{_bindir}
+install %{SOURCE4}	$RPM_BUILD_ROOT%{_bindir}
 
 install dnsroots.global $RPM_BUILD_ROOT%{_sysconfdir}
 install	axfr-get	$RPM_BUILD_ROOT%{_bindir}
@@ -372,7 +381,6 @@ install random-ip	$RPM_BUILD_ROOT%{_bindir}
 install rbldns		$RPM_BUILD_ROOT%{_bindir}
 install rbldns-conf	$RPM_BUILD_ROOT%{_bindir}
 install rbldns-data	$RPM_BUILD_ROOT%{_bindir}
-install rts		$RPM_BUILD_ROOT%{_bindir}
 install tinydns		$RPM_BUILD_ROOT%{_bindir}
 install tinydns-conf	$RPM_BUILD_ROOT%{_bindir}
 install tinydns-data	$RPM_BUILD_ROOT%{_bindir}
