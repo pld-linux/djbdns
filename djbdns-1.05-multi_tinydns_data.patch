@@ -1,0 +1,73 @@
+diff -ruN djbdns-1.05.orig/tinydns-data.c djbdns-1.05/tinydns-data.c
+--- djbdns-1.05.orig/tinydns-data.c	Mon Jan 22 03:51:44 2001
++++ djbdns-1.05/tinydns-data.c	Mon Jan 29 18:12:47 2001
+@@ -159,11 +159,7 @@
+     die_datatmp();
+ }
+ 
+-buffer b;
+-char bspace[1024];
+-
+ static stralloc line;
+-int match = 1;
+ unsigned long linenum = 0;
+ 
+ #define NUMFIELDS 15
+@@ -181,7 +177,7 @@
+   strerr_die4x(111,FATAL,"unable to parse data line ",strnum,why);
+ }
+ 
+-int main()
++int load(const char *fname)
+ {
+   int fddata;
+   int i;
+@@ -196,20 +192,18 @@
+   char type[2];
+   char soa[20];
+   char buf[4];
++  int match;
++  buffer b;
++  char bspace[1024];
+ 
+-  umask(022);
+-
+-  fddata = open_read("data");
++  fddata = open_read(fname);
+   if (fddata == -1)
+-    strerr_die2sys(111,FATAL,"unable to open data: ");
++    strerr_die4sys(111,FATAL,"unable to open ",fname,": ");
+   defaultsoa_init(fddata);
+ 
+   buffer_init(&b,buffer_unixread,fddata,bspace,sizeof bspace);
+ 
+-  fdcdb = open_trunc("data.tmp");
+-  if (fdcdb == -1) die_datatmp();
+-  if (cdb_make_start(&cdb,fdcdb) == -1) die_datatmp();
+-
++  match = 1;
+   while (match) {
+     ++linenum;
+     if (getln(&b,&line,&match,'\n') == -1)
+@@ -444,6 +438,21 @@
+       default:
+         syntaxerror(": unrecognized leading character");
+     }
++  }
++  close(fddata);
++}
++
++main(int argc, char **argv)
++{
++  umask(022);
++  fdcdb = open_trunc("data.tmp");
++  if (fdcdb == -1) die_datatmp();
++  if (cdb_make_start(&cdb,fdcdb) == -1) die_datatmp();
++
++  if (argc == 1)
++    load("data");
++  while(--argc) {
++    load(argv[argc]);
+   }
+ 
+   if (cdb_make_finish(&cdb) == -1) die_datatmp();
