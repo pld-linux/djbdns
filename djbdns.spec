@@ -12,7 +12,7 @@ Source1:	%{name}-doc.tar.gz
 Source2:	ftp://ftp.innominate.org/gpa/djb/%{name}-%{version}-man.tar.gz
 # Source2-md5:	2b4e71fa4592858e4508538f78d50f61
 Source3:	http://www.sericyb.com.au/tinydns-notify
-# Source3-md5:	2213bdc8c58c10cb8770b7e5b0d67aea
+# NoSource3-md5:	2213bdc8c58c10cb8770b7e5b0d67aea
 Patch0:		dnscache-1.05-multiple-ip.patch
 Patch1:		http://www.fefe.de/dns/%{name}-1.05-ipv6.diff
 #		based on http://www.ohse.de/uwe/patches/djbdns-1.05-multiip.diff
