@@ -2,7 +2,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	11
+Release:	12
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -13,6 +13,7 @@ Patch1:		http://www.fefe.de/dns/%{name}-1.05-ipv6.diff
 #		based on http://www.ohse.de/uwe/patches/djbdns-1.05-multiip.diff
 Patch2:		%{name}-1.05-multiip.diff
 Patch3:		http://iksz.hu/package/djbdns-conf/djbdns-1.05-multi_tinydns_data.patch
+Patch4:		%{name}-srv.patch
 URL:		http://cr.yp.to/djbdns.html
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
@@ -272,6 +273,7 @@ informacji.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 cd doc
 ln -s merge/djbdns/* .
 
