@@ -1,0 +1,4 @@
+- when any of dnscache, pickdns, rbldns, tinydns, walldns have same IP
+  address configured, warn about it in %post
+- kill the services in %preun
+- release 9, STBR
