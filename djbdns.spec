@@ -14,7 +14,12 @@ Patch1:		http://www.fefe.de/dns/%{name}-1.05-ipv6.diff
 Patch2:		%{name}-1.05-multiip.diff
 Patch3:		http://iksz.hu/package/djbdns-conf/djbdns-1.05-multi_tinydns_data.patch
 URL:		http://cr.yp.to/djbdns.html
-Prereq:		shadow
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
+Requires(postun):	/usr/sbin/userdel
+Requires(postun):	/usr/sbin/groupdel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -63,169 +68,198 @@ nastêpuj±cych pakietów:
  - djbdns-rbldns - serwer DNS list adresów IP
  - djbdns-axfrdns - serwer transferów stref DNS
 
-%package -n djbdns-dnscache
+%package dnscache
 Summary:	DJB's local DNS cache
 Summary(de):	DJBs lokaler DNS-Cache
 Summary(pl):	Lokalny cache DNS od DJB
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+PreReq:		%{name} = %{version}
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires(post):	diffutils
+Requires(post):	fileutils
+Requires(preun):	daemontools
+Requires(postun):	/usr/sbin/userdel
 Requires:	daemontools >= 0.70-5
-Prereq:		fileutils
-Prereq:		shadow
+Obsoletes:	dnscache
 
-%description -n djbdns-dnscache
+%description dnscache
 dnscache is a local DNS cache from the djbdns package. It accepts
 recursive DNS queries from local clients such as web browsers and mail
 transfer agents. It collects responses from remote DNS servers. It
 caches the responses to save time later.
 
-%description -n djbdns-dnscache -l de
+%description dnscache -l de
 dnscache ist ein lokaler DNS-Cache aus dem djbdns-Paket. Es empfängt
 rekursive DNS-Fragen von den lokalen Klienten, zum Beispiel
 Web-Browsers und Mail-Transfer-Agenten. Es sammelt die Antworten von
 den Fern-DNS-Servers. Es merkt sich die Antworten, um die Zeit später
 zu sparen.
 
-%description -n djbdns-dnscache -l pl
+%description dnscache -l pl
 dnscache jest lokalnym cachem DNS z pakietu djbdns. Przyjmuje on
 rekursywne zapytania DNS od lokalnych klientów takich, jak
 przegl±darki WWW i agenci transferu poczty (MTA). Zbiera on odpowiedzi
 od zdalnych serwerów DNS. Zapamiêtuje on odpowiedzi, ¿eby pó¼niej
 oszczêdziæ czas.
 
-%package -n djbdns-tinydns
+%package tinydns
 Summary:	DJB's DNS server
 Summary(de):	DJBs DNS-Server
 Summary(pl):	Serwer DNS od DJB
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+PreReq:		%{name} = %{version}
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires(post):	diffutils
+Requires(preun):	daemontools
+Requires(postun):	/usr/sbin/userdel
 Requires:	daemontools >= 0.70-5
 Requires:	make
-Prereq:		shadow
+Obsoletes:	tinydns
 
-%description -n djbdns-tinydns
+%description tinydns
 tinydns is a DNS server from the djbdns package. It accepts iterative
 DNS queries from hosts around the Internet and responds with
 locally-configured information.
 
-%description -n djbdns-tinydns -l de
+%description tinydns -l de
 tinydns ist ein DNS-Server aus dem djbdns-Paket. Es empfängt iterative
 DNS-Fragen von dem Hosts aus allem Internet und antwortet mit den
 lokal-konfigurierten Informationen.
 
-%description -n djbdns-tinydns -l pl
+%description tinydns -l pl
 tinydns jest serwerem DNS z pakietu djbdns. Przyjmuje on iteracyjne
 zapytania DNS od komputerów z ca³ego Internetu i odpowiada przy u¿yciu
 lokalnie skonfigurowanych informacji.
 
-%package -n djbdns-pickdns
+%package pickdns
 Summary:	DJB's load-balancing DNS server
 Summary(de):	DJBs Belastung ausgleichender DNS-Server
 Summary(pl):	Serwer DNS równowa¿±cy obci±¿enie od DJB
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+PreReq:		%{name} = %{version}
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires(post):	diffutils
+Requires(preun):	daemontools
+Requires(postun):	/usr/sbin/userdel
 Requires:	daemontools >= 0.70-5
 Requires:	make
-Prereq:		shadow
+Obsoletes:	pickdns
 
-%description -n djbdns-pickdns
+%description pickdns
 pickdns is a DNS load-balancing server from the djbdns package. It
 accepts iterative DNS queries from hosts around the Internet and
 responds with a dynamic selection of locally configured IP addresses
 with 5-second TTLs.
 
-%description -n djbdns-pickdns -l de
+%description pickdns -l de
 pickdns ist ein Belastung ausgleichender DNS-Server aus dem
 djbdns-Paket. Es empfängt iterative DNS-Fragen von den Hosts aus allem
 Internet und antwortet mit eine dynamische Auswahl von den
 lokal-konfigurierten IP-Adressen mit 5-Sekunden-TTLs.
 
-%description -n djbdns-pickdns -l pl
+%description pickdns -l pl
 pickdns jest równowa¿±cym obci±¿enie serwerem DNS z pakietu djbdns.
 Odbiera on iteracyjne zapytania DNS od komputerów z ca³ego internetu i
 odpowiada dynamicznym wyborem lokalnie skonfigurowanych adresów IP z
 5-sekundowymi TTLami.
 
-%package -n djbdns-walldns
+%package walldns
 Summary:	DJB's reverse DNS wall
 Summary(de):	DJBs Wand rückgekehrten DNSs
 Summary(pl):	¦ciana dla odwrotnych zapytañ DNS od DJB
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+PreReq:		%{name} = %{version}
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires(post):	diffutils
+Requires(preun):	daemontools
+Requires(postun):	/usr/sbin/userdel
 Requires:	daemontools >= 0.70-5
-Prereq:		shadow
+Obsoletes:	walldns
 
-%description -n djbdns-walldns
+%description walldns
 walldns is a reverse DNS wall from the djbdns package. It accepts
 iterative DNS queries for in-addr.arpa domains from hosts around the
 Internet and supplies generic responses that avoid revealing local
 host information.
 
-%description -n djbdns-walldns -l de
+%description walldns -l de
 walldns ist ein Wand rückgekehrten DNSs aus dem djbdns-Paket. Es
 empfängt iterative DNS-Fragen für den in-addr.arpa-Domänen von den
 Hosts aus allem Internet und liefert Antworte, die vermeiden
 Informationen über die lokalen Hosts zu aufzudecken.
 
-%description -n djbdns-walldns -l pl
+%description walldns -l pl
 walldns jest ¶cian± dla odwrotnych zapytañ DNS z pakietu djbdns.
 Przyjmuje ona iteracyjne zapytania DNS dla domen in-addr.arpa od
 komputerów z ca³ego Internetu i dostarcza odpowiedzi, które unikaj±
 ujawniania informacji o lokalnych komputerach.
 
-%package -n djbdns-rbldns
+%package rbldns
 Summary:	DJB's IP-address-listing DNS server
 Summary(de):	DJBs IP-Adressen-Listen-DNS-Server
 Summary(pl):	Serwer DNS list adresów IP od DJB
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+PreReq:		%{name} = %{version}
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires(post):	diffutils
+Requires(preun):	daemontools
+Requires(postun):	/usr/sbin/userdel
 Requires:	daemontools >= 0.70-5
 Requires:	make
-Prereq:		shadow
+Obsoletes:	rbldns
 
-%description -n djbdns-rbldns
+%description rbldns
 rbldns is an IP-address-listing DNS server from the djbdns package. It
 accepts iterative DNS queries from hosts around the Internet asking
 about various IP addresses. It provides responses showing whether the
 addresses are on a locally configured list, such as RBL or DUL.
 
-%description -n djbdns-rbldns -l de
+%description rbldns -l de
 rbldns ist ein IP-Adressen-Listen-DNS-Server aus dem djbdns-Paket. Es
 empfängt iterative DNS-Fragen von den Hosts aus allem Internet
 fragende nach verschiedene IP-Adresse. Es liefert Antworte, die zeugen
 ob die Adresse sich auf einer lokal-konfigurierten Liste befinden, zum
 Beispiel RBL oder DUL.
 
-%description -n djbdns-rbldns -l pl
+%description rbldns -l pl
 rbldns jest serwerem DNS list adresów z pakietu djbdns. Przyjmuje on
 iteracyjne zapytania DNS od komputerów z ca³ego Internetu pytaj±ce o
 ró¿ne adresy IP. Dostarcza on odpowiedzi pokazuj±cych, czy adresy te
 s± na lokalnie skonfigurowanej li¶cie takiej, jak RBL lub DUL.
 
-%package -n djbdns-axfrdns
+%package axfrdns
 Summary:	DJB's DNS zone-transfer server
 Summary(de):	DJBs DNS-Zonen-Transfer-Server
 Summary(pl):	Serwer transferów stref DNS od DJB
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
-Requires:	tinydns = %{version}
+PreReq:		%{name} = %{version}
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires(preun):	daemontools
+Requires(postun):	/usr/sbin/userdel
+Requires:	%{name}-tinydns = %{version}
 Requires:	daemontools >= 0.70-5
-Requires:	ucspi-tcp
 Requires:	make
-Prereq:		shadow
+Requires:	ucspi-tcp
+Obsoletes:	axfrdns
 
-%description -n djbdns-axfrdns
+%description axfrdns
 axfrdns is a DNS zone transfer server from the djbdns package. It
 reads a zone-transfer request in DNS-over-TCP format from its standard
 input and responds with locally configured information.
 
-%description -n djbdns-axfrdns -l de
+%description axfrdns -l de
 axfrdns ist ein DNS-Zonen-Transfer-Server aus dem djbdns-Paket. Es
 liest ein Zonen-Transfer-Ersuchen im DNS-over-TCP-Format von seinem
 standarden Eingabe und antwortet mit den lokal-konfigurierten
 Informationen.
 
-%description -n djbdns-axfrdns -l pl
+%description axfrdns -l pl
 axfrdns jest serwerem transferów stref DNS z pakietu djbdns. Wczytuje
 on ze standardowego wej¶cia pro¶bê o transfer strefy w formacie
 DNS-over-TCP i odpowiada przy u¿yciu lokalnie skonfigurowanych
@@ -285,8 +319,6 @@ install walldns-conf	$RPM_BUILD_ROOT%{_bindir}
 install djbdns-man/*.1	$RPM_BUILD_ROOT%{_mandir}/man1
 install djbdns-man/*.5  $RPM_BUILD_ROOT%{_mandir}/man5
 install djbdns-man/*.8  $RPM_BUILD_ROOT%{_mandir}/man8
-
-gzip -9nf CHANGES TODO MULTIPLEIP TINYDNS
 
 ##### DNSCACHE #####
 
@@ -487,22 +519,25 @@ ln -s ..%{_sysconfdir}/walldns
 ln -s ..%{_sysconfdir}/rbldns
 ln -s ..%{_sysconfdir}/axfrdns
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %pre
 if [ -n "`getgid djbdns`" ]; then
 	if [ "`getgid djbdns`" != "32" ]; then
-		echo "Warning: the group djbdns doesn't have gid=32. Correct this before installing djbdns" 1>&2
+		echo "Error: group djbdns doesn't have gid=32. Correct this before installing djbdns." 1>&2
 		exit 1
 	fi
 else
-	%{_sbindir}/groupadd -g 32 -r -f djbdns
+	/usr/sbin/groupadd -g 32 -r -f djbdns
 fi
 if [ -n "`id -u dnslog 2>/dev/null`" ]; then
 	if [ "`id -u dnslog`" != "32" ]; then
-		echo "Warning: the user dnslog doesn't have uid=32. Correct this before installing djbdns" 1>&2
+		echo "Error: user dnslog doesn't have uid=32. Correct this before installing djbdns." 1>&2
 		exit 1
 	fi
 else
-	%{_sbindir}/useradd -u 32 -r -d / -s /bin/false -c "djbdns User" -g djbdns dnslog 1>&2
+	/usr/sbin/useradd -u 32 -r -d / -s /bin/false -c "djbdns User" -g djbdns dnslog 1>&2
 fi
 
 %postun
@@ -511,17 +546,17 @@ if [ "$1" = "0" ]; then
 	/usr/sbin/groupdel djbdns
 fi
 
-%pre -n djbdns-dnscache
+%pre dnscache
 if [ -n "`id -u dnscache 2>/dev/null`" ]; then
 	if [ "`id -u dnscache`" != "33" ]; then
-		echo "Warning: the user dnscache doesn't have uid=33. Correct this before installing dnscache" 1>&2
+		echo "Error: user dnscache doesn't have uid=33. Correct this before installing djbdns-dnscache." 1>&2
 		exit 1
 	fi
 else
-	%{_sbindir}/useradd -u 33 -r -d /etc/dnscache -s /bin/false -c "djbdns User" -g djbdns dnscache 1>&2
+	/usr/sbin/useradd -u 33 -r -d /etc/dnscache -s /bin/false -c "djbdns User" -g djbdns dnscache 1>&2
 fi
 
-%post -n djbdns-dnscache
+%post dnscache
 if [ \! -s /etc/dnscache/seed ]; then
 	dd if=/dev/urandom of=/etc/dnscache/seed bs=128c count=1
 fi
@@ -546,27 +581,27 @@ if diff -u /etc/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
 	echo "or /etc/walldns/env/IP."
 fi
 
-%preun -n djbdns-dnscache
+%preun dnscache
 if [ "$1" = "0" ]; then
 	svc -d /service/dnscache
 fi
 
-%postun -n djbdns-dnscache
+%postun dnscache
 if [ "$1" = "0" ]; then
 	/usr/sbin/userdel dnscache
 fi
 
-%pre -n djbdns-tinydns
+%pre tinydns
 if [ -n "`id -u tinydns 2>/dev/null`" ]; then
 	if [ "`id -u tinydns`" != "34" ]; then
-		echo "Warning: the user tinydns doesn't have uid=34. Correct this before installing djbdns-tinydns" 1>&2
+		echo "Error: user tinydns doesn't have uid=34. Correct this before installing djbdns-tinydns." 1>&2
 		exit 1
 	fi
 else
-	%{_sbindir}/useradd -u 34 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g djbdns tinydns 1>&2
+	/usr/sbin/useradd -u 34 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g djbdns tinydns 1>&2
 fi
 
-%post -n djbdns-tinydns
+%post tinydns
 if diff -u /etc/{dnscache,tinydns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and tinydns can't work on the same"
 	echo "IP address. You have to edit either /etc/dnscache/env/IP"
@@ -588,27 +623,27 @@ if diff -u /etc/{tiny,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "or /etc/walldns/env/IP."
 fi
 
-%preun -n djbdns-tinydns
+%preun tinydns
 if [ "$1" = "0" ]; then
 	svc -d /service/tinydns
 fi
 
-%postun -n djbdns-tinydns
+%postun tinydns
 if [ "$1" = "0" ]; then
 	/usr/sbin/userdel tinydns
 fi
 
-%pre -n djbdns-pickdns
+%pre pickdns
 if [ -n "`id -u pickdns 2>/dev/null`" ]; then
 	if [ "`id -u pickdns`" != "35" ]; then
-		echo "Warning: the user pickdns doesn't have uid=35. Correct this before installing pickdns" 1>&2
+		echo "Error: user pickdns doesn't have uid=35. Correct this before installing djbdns-pickdns." 1>&2
 		exit 1
 	fi
 else
-	%{_sbindir}/useradd -u 35 -r -d /etc/pickdns -s /bin/false -c "djbdns User" -g djbdns pickdns 1>&2
+	/usr/sbin/useradd -u 35 -r -d /etc/pickdns -s /bin/false -c "djbdns User" -g djbdns pickdns 1>&2
 fi
 
-%post -n djbdns-pickdns
+%post pickdns
 if diff -u /etc/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and pickdns can't work on the same"
 	echo "IP address. You have to edit either /etc/dnscache/env/IP"
@@ -630,27 +665,27 @@ if diff -u /etc/{pick,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "or /etc/walldns/env/IP."
 fi
 
-%preun -n djbdns-pickdns
+%preun pickdns
 if [ "$1" = "0" ]; then
 	svc -d /service/pickdns
 fi
 
-%postun -n djbdns-pickdns
+%postun pickdns
 if [ "$1" = "0" ]; then
 	/usr/sbin/userdel pickdns
 fi
 
-%pre -n djbdns-walldns
+%pre walldns
 if [ -n "`id -u walldns 2>/dev/null`" ]; then
 	if [ "`id -u walldns`" != "36" ]; then
-		echo "Warning: the user walldns doesn't have uid=36. Correct this before installing walldns" 1>&2
+		echo "Error: user walldns doesn't have uid=36. Correct this before installing djbdns-walldns." 1>&2
 		exit 1
 	fi
 else
-	%{_sbindir}/useradd -u 36 -r -d /etc/walldns -s /bin/false -c "djbdns User" -g djbdns walldns 1>&2
+	/usr/sbin/useradd -u 36 -r -d /etc/walldns -s /bin/false -c "djbdns User" -g djbdns walldns 1>&2
 fi
 
-%post -n djbdns-walldns
+%post walldns
 if diff -u /etc/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and walldns can't work on the same"
 	echo "IP address. You have to edit either /etc/dnscache/env/IP"
@@ -672,27 +707,27 @@ if diff -u /etc/{tiny,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "or /etc/walldns/env/IP."
 fi
 
-%preun -n djbdns-walldns
+%preun walldns
 if [ "$1" = "0" ]; then
 	svc -d /service/walldns
 fi
 
-%postun -n djbdns-walldns
+%postun walldns
 if [ "$1" = "0" ]; then
 	/usr/sbin/userdel walldns
 fi
 
-%pre -n djbdns-rbldns
+%pre rbldns
 if [ -n "`id -u rbldns 2>/dev/null`" ]; then
 	if [ "`id -u rbldns`" != "37" ]; then
-		echo "Warning: the user rbldns doesn't have uid=37. Correct this before installing djbdns-rbldns" 1>&2
+		echo "Error: user rbldns doesn't have uid=37. Correct this before installing djbdns-rbldns." 1>&2
 		exit 1
 	fi
 else
-	%{_sbindir}/useradd -u 37 -r -d /etc/rbldns -s /bin/false -c "djbdns User" -g djbdns rbldns 1>&2
+	/usr/sbin/useradd -u 37 -r -d /etc/rbldns -s /bin/false -c "djbdns User" -g djbdns rbldns 1>&2
 fi
 
-%post -n djbdns-rbldns
+%post rbldns
 if diff -u /etc/{dnscache,rbldns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and rbldns can't work on the same"
 	echo "IP address. You have to edit either /etc/dnscache/env/IP"
@@ -714,49 +749,46 @@ if diff -u /etc/{rbl,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "or /etc/walldns/env/IP."
 fi
 
-%preun -n djbdns-rbldns
+%preun rbldns
 if [ "$1" = "0" ]; then
 	svc -d /service/rbldns
 fi
 
-%postun -n djbdns-rbldns
+%postun rbldns
 if [ "$1" = "0" ]; then
 	/usr/sbin/userdel rbldns
 fi
 
-%pre -n djbdns-axfrdns
+%pre axfrdns
 if [ -n "`id -u axfrdns 2>/dev/null`" ]; then
 	if [ "`id -u axfrdns`" != "38" ]; then
-		echo "Warning: the user axfrdns doesn't have uid=38. Correct this before installing axfrdns" 1>&2
+		echo "Error: user axfrdns doesn't have uid=38. Correct this before installing djbdns-axfrdns." 1>&2
 		exit 1
 	fi
 else
-	%{_sbindir}/useradd -u 38 -r -d /etc/axfrdns -s /bin/false -c "djbdns User" -g djbdns axfrdns 1>&2
+	/usr/sbin/useradd -u 38 -r -d /etc/axfrdns -s /bin/false -c "djbdns User" -g djbdns axfrdns 1>&2
 fi
 
-%preun -n djbdns-axfrdns
+%preun axfrdns
 if [ "$1" = "0" ]; then
 	svc -d /service/axfrdns
 fi
 
-%postun -n djbdns-axfrdns
+%postun axfrdns
 if [ "$1" = "0" ]; then
 	/usr/sbin/userdel axfrdns
 fi
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
 %defattr(644,root,root,755)
-%doc *.gz doc/*
+%doc CHANGES TODO MULTIPLEIP TINYDNS doc/*
 %attr(755,root,root) %{_bindir}/cachetest
 %attr(755,root,root) %{_bindir}/dns[f-t]*
 %attr(755,root,root) %{_bindir}/axfr-get
 %{_mandir}/man[15]/*
 %{_mandir}/man8/axfr-get*
 
-%files -n djbdns-dnscache
+%files dnscache
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/dnscache*
 %config %attr(644,root,root) %{_sysconfdir}/dnsroots.global
@@ -776,7 +808,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/dnscache*
 /service/dnscache
 
-%files -n djbdns-tinydns
+%files tinydns
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/tinydns*
 %dir %attr(3755,root,root) %{_sysconfdir}/tinydns
@@ -794,7 +826,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/tinydns*
 /service/tinydns
 
-%files -n djbdns-pickdns
+%files pickdns
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pickdns*
 %dir %attr(3755,root,root) %{_sysconfdir}/pickdns
@@ -811,7 +843,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/pickdns*
 /service/pickdns
 
-%files -n djbdns-walldns
+%files walldns
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/walldns*
 %dir %attr(3755,root,root) %{_sysconfdir}/walldns
@@ -826,7 +858,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/walldns*
 /service/walldns
 
-%files -n djbdns-rbldns
+%files rbldns
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/rbldns*
 %dir %attr(3755,root,root) %{_sysconfdir}/rbldns
@@ -843,7 +875,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/rbldns*
 /service/rbldns
 
-%files -n djbdns-axfrdns
+%files axfrdns
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/axfrdns*
 %dir %attr(3755,root,root) %{_sysconfdir}/axfrdns
