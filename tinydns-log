@@ -1,0 +1,53 @@
+#!/usr/bin/perl -pw
+
+# tinydns log formatting utility
+# based on Faried Nawaz's logfile formatter for dnscache
+# by Kenji Rikitake <kenji.rikitake@acm.org> 29-JUL-2000
+# please put this on djbdns.org ftp site.
+# modified 24-AUG-2002 by Andrew Pam <xanni@sericyb.com.au>
+# to add tinydns response flag "C" and more DNS RR type codes
+# modified 26-AUG-2002 by Andrew Pam <xanni@sericyb.com.au>
+# to support axfrdns logs as well as tinydns logs
+
+# convert addresses in hex to dotted decimal notation.
+s/\b([a-f0-9]{8})\b/join(".", unpack("C*", pack("H8", $1)))/eg;
+
+### clean up some messages
+# convert stuff like 127.0.0.2:0422:05be to something more descriptive.
+# query tai64n host:port:qid flag qtype thing
+# keep tai64n header as is - use tai64nlocal to convert it to TAI
+
+s/^(@[a-f0-9]+) \b([\d.]+):(\w+):(\w+) ([\+\-CI\/]?)\s?\b([a-f0-9]+) \b([-.\w]+)/$1." ".printQueryLine($2,$3,$4,$5,$6,$7)/e;
+
+### subs
+
+sub printQueryLine {
+  my ($host, $port, $query_id, $flag, $query_type, $query) = @_;
+
+  # pad hostname
+
+  my $ret = "$host:";
+  $ret .= hex($port);
+  $ret .= ":" . hex($query_id);
+  $ret .= " " . $flag if $flag;
+  $ret .= " " . queryType(hex($query_type)) . " $query";
+  
+  return $ret;
+}
+
+# DNS query type codes from the following RFCs:
+# 1035,1183,1348,1876,1995,2065,2163,2230,2535,2538,2845,2874,2915,2930,3123
+%QTYPE = (
+	1, "a", 2, "ns", 5, "cname", 6, "soa", 11, "wks", 12, "ptr",
+	13, "hinfo", 14, "minfo", 15, "mx", 16, "txt", 17, "rp",
+	18, "afsdb", 20, "isdn", 21, "rt", 22, "nsap", 23, "nsap-ptr",
+	24, "sig", 25, "key", 26, "px", 28, "aaaa", 29, "loc", 30, "nxt",
+	33, "srv", 35, "naptr", 36, "kx", 37, "cert", 38, "a6", 42, "apl",
+	249, "tkey", 250, "tsig", 251, "ixfr", 252, "axfr", 255, "any"
+);
+
+sub queryType {
+  my ($type) = shift;
+  return $QTYPE{$type} || $type;
+}
+
