@@ -2,7 +2,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	15
+Release:	16
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -160,7 +160,7 @@ Group:		Networking/Daemons
 License:	Free to use
 URL:		http://www.sericyb.com.au/tinydns-notify
 PreReq:		%{name} = %{version}
-Requires:	perl-Socket
+Requires:	perl-modules
 Requires:	perl-Net-DNS
 Obsoletes:	tinydns-notify
 
