@@ -29,13 +29,16 @@ Patch7:         %{name}-ignoreip.patch
 Patch8:		%{name}-tinydns-include.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
-Requires(pre):	/usr/bin/getgid
+BuildRequires:	rpmbuild(macros) >= 1.159
 Requires(pre):	/bin/id
+Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
+Provides:	group(djbdns)
 Provides:	nameserver
+Provides:	user(dnslog)
 Obsoletes:	caching-nameserver
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -102,6 +105,7 @@ Requires(post):	diffutils
 Requires(post):	fileutils
 Requires(preun):	daemontools
 Requires:	daemontools >= 0.70-5
+Provides:	user(dnscache)
 Obsoletes:	dnscache
 
 %description dnscache
@@ -139,6 +143,7 @@ Requires(post):	diffutils
 Requires(preun):	daemontools
 Requires:	daemontools >= 0.70-5
 Requires:	make
+Provides:	user(tinydns)
 Obsoletes:	tinydns
 
 %description tinydns
@@ -193,6 +198,7 @@ Requires(post):	diffutils
 Requires(preun):	daemontools
 Requires:	daemontools >= 0.70-5
 Requires:	make
+Provides:	user(pickdns)
 Obsoletes:	pickdns
 
 %description pickdns
@@ -227,6 +233,7 @@ Requires(postun):	/usr/sbin/groupdel
 Requires(post):	diffutils
 Requires(preun):	daemontools
 Requires:	daemontools >= 0.70-5
+Provides:	user(walldns)
 Obsoletes:	walldns
 
 %description walldns
@@ -262,6 +269,7 @@ Requires(post):	diffutils
 Requires(preun):	daemontools
 Requires:	daemontools >= 0.70-5
 Requires:	make
+Provides:	user(rbldns)
 Obsoletes:	rbldns
 
 %description rbldns
@@ -299,6 +307,7 @@ Requires:	%{name}-tinydns = %{version}
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Requires:	ucspi-tcp
+Provides:	user(axfrdns)
 Obsoletes:	axfrdns
 
 %description axfrdns
@@ -611,8 +620,8 @@ fi
 
 %postun
 if [ "$1" = "0" ]; then
-	/usr/sbin/userdel dnslog
-	/usr/sbin/groupdel djbdns
+	%userremove dnslog
+	%groupremove djbdns
 fi
 
 %pre dnscache
@@ -657,7 +666,7 @@ fi
 
 %postun dnscache
 if [ "$1" = "0" ]; then
-	/usr/sbin/userdel dnscache
+	%userremove dnscache
 fi
 
 %pre tinydns
@@ -699,7 +708,7 @@ fi
 
 %postun tinydns
 if [ "$1" = "0" ]; then
-	/usr/sbin/userdel tinydns
+	%userremove tinydns
 fi
 
 %pre pickdns
@@ -741,7 +750,7 @@ fi
 
 %postun pickdns
 if [ "$1" = "0" ]; then
-	/usr/sbin/userdel pickdns
+	%userremove pickdns
 fi
 
 %pre walldns
@@ -783,7 +792,7 @@ fi
 
 %postun walldns
 if [ "$1" = "0" ]; then
-	/usr/sbin/userdel walldns
+	%userremove walldns
 fi
 
 %pre rbldns
@@ -825,7 +834,7 @@ fi
 
 %postun rbldns
 if [ "$1" = "0" ]; then
-	/usr/sbin/userdel rbldns
+	%userremove rbldns
 fi
 
 %pre axfrdns
@@ -845,7 +854,7 @@ fi
 
 %postun axfrdns
 if [ "$1" = "0" ]; then
-	/usr/sbin/userdel axfrdns
+	%userremove axfrdns
 fi
 
 %files
