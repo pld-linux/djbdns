@@ -20,6 +20,7 @@ Patch2:		%{name}-1.05-multiip.diff
 Patch3:		http://iksz.hu/package/djbdns-conf/djbdns-1.05-multi_tinydns_data.patch
 Patch4:		%{name}-srv.patch
 Patch5:		%{name}-glibc.patch
+# http://www.iecc.com/rbldns-patch.txt
 Patch6:         %{name}-rbldns_a.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
@@ -539,6 +540,7 @@ data.cdb: data
 ___
 cat>data<<___
 # example
+# !10.11.12.13:See http://bad.example.com
 # :127.0.0.2:blacklisted"
 # 1.2.3.0/24
 ___
