@@ -1,13 +1,13 @@
 Summary:     	DJB DNS 
 Summary(pl): 	DJB DNS
 Name:        	djbdns
-Version:     	1.02
+Version:     	1.03
 Release:     	1
 Group:       	Networking/Daemons
 Group(pl):   	Sieciowe/Serwery
 Copyright:   	GPL
 URL:         	http://cr.yp.to/djbdns.html
-Source0:      	%{name}-%{version}.tar.gz
+Source0:      	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
 Source1:	%{name}-doc.tar.gz
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
