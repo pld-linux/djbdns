@@ -2,7 +2,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	14
+Release:	15
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -20,6 +20,7 @@ Patch2:		%{name}-1.05-multiip.diff
 Patch3:		http://iksz.hu/package/djbdns-conf/djbdns-1.05-multi_tinydns_data.patch
 Patch4:		%{name}-srv.patch
 Patch5:		%{name}-glibc.patch
+Patch6:         %{name}-rbldns_a.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
 Requires(pre):	/usr/bin/getgid
@@ -327,6 +328,7 @@ informacji.
 %patch3 -p1
 %patch4 -p1
 %patch5
+%patch6 -p1
 cd doc
 ln -s merge/djbdns/* .
 
