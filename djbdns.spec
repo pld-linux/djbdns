@@ -24,7 +24,7 @@ cd doc
 ln -s merge/djbdns/* .
 
 %build
-echo %{__cc} %{?debug:-O -g}%{!?debug:$RPM_OPT_FLAGS} >conf-cc
+echo %{__cc} %{?debug:-O0 -g}%{!?debug:$RPM_OPT_FLAGS} >conf-cc
 echo /usr >conf-home
 %{__make} 
 
