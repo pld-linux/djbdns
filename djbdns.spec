@@ -431,7 +431,7 @@ exec %{_bindir}/tinydns-edit data data.new add mx \${1+"\$@"}
 ___
 cat>root/Makefile<<___
 data.cdb: data
-        %{_bindir}/tinydns-data
+	%{_bindir}/tinydns-data
 ___
 
 ##### PICKDNS #####
@@ -457,7 +457,7 @@ mkdir root
 touch root/data
 cat>root/Makefile<<___
 data.cdb: data
-        %{_bindir}/pickdns-data
+	%{_bindir}/pickdns-data
 ___
 
 ##### WALLDNS #####
@@ -504,7 +504,7 @@ mkdir root
 touch root/data
 cat>root/Makefile<<___
 data.cdb: data
-        %{_bindir}/rbldns-data
+	%{_bindir}/rbldns-data
 ___
 
 ##### AXFRDNS #####
@@ -530,7 +530,7 @@ exec envdir ./env sh -c '
 ___
 cat>Makefile<<___
 tcp.cdb: tcp
-        tcprules tcp.cdb tcp.tmp < tcp
+	tcprules tcp.cdb tcp.tmp < tcp
 ___
 cat>tcp<<___
 # sample line:  1.2.3.4:allow,AXFR="heaven.af.mil/3.2.1.in-addr.arpa"
