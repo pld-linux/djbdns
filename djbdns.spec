@@ -12,10 +12,10 @@ Source1:	%{name}-doc.tar.gz
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-DJB DNS Tools
+DJB DNS Tools.
 
 %description -l pl
-Narzêdzia DJB do obs³ugi DNS 
+Narzêdzia DJB do obs³ugi DNS.
 
 %prep
 tar zxf %{SOURCE1}
@@ -23,7 +23,7 @@ cd doc
 ln -s merge/djbdns/* .
 
 %setup -q
-echo gcc $RPM_OPT_FLAGS >conf-cc
+echo %{__cc} %{?debug:-O -g}%{!?debug:$RPM_OPT_FLAGS} >conf-cc
 echo /usr >conf-home
 
 %build
@@ -65,13 +65,12 @@ install tinydns-get	$RPM_BUILD_ROOT%{_bindir}
 install walldns		$RPM_BUILD_ROOT%{_bindir}
 install walldns-conf	$RPM_BUILD_ROOT%{_bindir}
 
-gzip -9nf {CHANGES,FILES,README,SYSDEPS,TARGETS,TODO,VERSION} 
+gzip -9nf CHANGES README SYSDEPS TARGETS TODO VERSION
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc {CHANGES,FILES,README,SYSDEPS,TARGETS,TODO,VERSION}.gz
-%doc ../doc/
+%doc *.gz ../doc/
 %attr(755,root,root) %{_bindir}/*
