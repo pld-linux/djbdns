@@ -2,7 +2,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	8
+Release:	9
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -534,6 +534,33 @@ else
 fi
 dd if=/dev/urandom of=seed bs=128c count=1
 
+%post -n dnscache
+if diff -u /etc/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscache and pickdns can't work on the same"
+	echo "IP address. You have to edit either /etc/dnscache/env/IP"
+	echo "or /etc/pickdns/env/IP."
+fi
+if diff -u /etc/{dnscache,rbldns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscache and rbldns can't work on the same"
+	echo "IP address. You have to edit either /etc/dnscache/env/IP"
+	echo "or /etc/rbldns/env/IP."
+fi
+if diff -u /etc/{dnscache,tinydns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscache and tinydns can't work on the same"
+	echo "IP address. You have to edit either /etc/dnscache/env/IP"
+	echo "or /etc/tinydns/env/IP."
+fi
+if diff -u /etc/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscache and walldns can't work on the same"
+	echo "IP address. You have to edit either /etc/dnscache/env/IP"
+	echo "or /etc/walldns/env/IP."
+fi
+
+%preun -n dnscache
+if [ "$1" = "0" ]; then
+	svc -d /service/dnscache
+fi
+
 %postun -n dnscache
 if [ "$1" = "0" ]; then
 	/usr/sbin/userdel dnscache
@@ -547,6 +574,33 @@ if [ -n "`id -u tinydns 2>/dev/null`" ]; then
 	fi
 else
 	%{_sbindir}/useradd -u 34 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g djbdns tinydns 1>&2
+fi
+
+%post -n tinydns
+if diff -u /etc/{dnscache,tinydns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscache and tinydns can't work on the same"
+	echo "IP address. You have to edit either /etc/dnscache/env/IP"
+	echo "or /etc/tinydns/env/IP."
+fi
+if diff -u /etc/{pick,tiny}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: pickdns and tinydns can't work on the same"
+	echo "IP address. You have to edit either /etc/pickdns/env/IP"
+	echo "or /etc/tinydns/env/IP."
+fi
+if diff -u /etc/{rbl,tiny}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: rbldns and tinydns can't work on the same"
+	echo "IP address. You have to edit either /etc/rbldns/env/IP"
+	echo "or /etc/tinydns/env/IP."
+fi
+if diff -u /etc/{tiny,wall}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: tinydns and walldns can't work on the same"
+	echo "IP address. You have to edit either /etc/tinydns/env/IP"
+	echo "or /etc/walldns/env/IP."
+fi
+
+%preun -n tinydns
+if [ "$1" = "0" ]; then
+	svc -d /service/tinydns
 fi
 
 %postun -n tinydns
@@ -564,6 +618,33 @@ else
 	%{_sbindir}/useradd -u 35 -r -d /etc/pickdns -s /bin/false -c "djbdns User" -g djbdns pickdns 1>&2
 fi
 
+%post -n pickdns
+if diff -u /etc/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscache and pickdns can't work on the same"
+	echo "IP address. You have to edit either /etc/dnscache/env/IP"
+	echo "or /etc/pickdns/env/IP."
+fi
+if diff -u /etc/{pick,rbl}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: pickdns and rbldns can't work on the same"
+	echo "IP address. You have to edit either /etc/pickdns/env/IP"
+	echo "or /etc/rbldns/env/IP."
+fi
+if diff -u /etc/{pick,tiny}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: pickdns and tinydns can't work on the same"
+	echo "IP address. You have to edit either /etc/pickdns/env/IP"
+	echo "or /etc/tinydns/env/IP."
+fi
+if diff -u /etc/{pick,wall}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: pickdns and walldns can't work on the same"
+	echo "IP address. You have to edit either /etc/pickdns/env/IP"
+	echo "or /etc/walldns/env/IP."
+fi
+
+%preun -n pickdns
+if [ "$1" = "0" ]; then
+	svc -d /service/pickdns
+fi
+
 %postun -n pickdns
 if [ "$1" = "0" ]; then
 	/usr/sbin/userdel pickdns
@@ -577,6 +658,33 @@ if [ -n "`id -u walldns 2>/dev/null`" ]; then
 	fi
 else
 	%{_sbindir}/useradd -u 36 -r -d /etc/walldns -s /bin/false -c "djbdns User" -g djbdns walldns 1>&2
+fi
+
+%post -n walldns
+if diff -u /etc/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscache and walldns can't work on the same"
+	echo "IP address. You have to edit either /etc/dnscache/env/IP"
+	echo "or /etc/walldns/env/IP."
+fi
+if diff -u /etc/{pick,wall}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: pickdns and walldns can't work on the same"
+	echo "IP address. You have to edit either /etc/pickdns/env/IP"
+	echo "or /etc/walldns/env/IP."
+fi
+if diff -u /etc/{rbl,wall}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: rbldns and walldns can't work on the same"
+	echo "IP address. You have to edit either /etc/rbldns/env/IP"
+	echo "or /etc/walldns/env/IP."
+fi
+if diff -u /etc/{tiny,wall}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: tinydns and walldns can't work on the same"
+	echo "IP address. You have to edit either /etc/tinydns/env/IP"
+	echo "or /etc/walldns/env/IP."
+fi
+
+%preun -n walldns
+if [ "$1" = "0" ]; then
+	svc -d /service/walldns
 fi
 
 %postun -n walldns
@@ -594,6 +702,33 @@ else
 	%{_sbindir}/useradd -u 37 -r -d /etc/rbldns -s /bin/false -c "djbdns User" -g djbdns rbldns 1>&2
 fi
 
+%post -n rbldns
+if diff -u /etc/{dnscache,rbldns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscache and rbldns can't work on the same"
+	echo "IP address. You have to edit either /etc/dnscache/env/IP"
+	echo "or /etc/rbldns/env/IP."
+fi
+if diff -u /etc/{pick,rbl}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: pickdns and rbldns can't work on the same"
+	echo "IP address. You have to edit either /etc/pickdns/env/IP"
+	echo "or /etc/rbldns/env/IP."
+fi
+if diff -u /etc/{rbl,tiny}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: rbldns and tinydns can't work on the same"
+	echo "IP address. You have to edit either /etc/rbldns/env/IP"
+	echo "or /etc/tinydns/env/IP."
+fi
+if diff -u /etc/{rbl,wall}dns/env/IP >/dev/zero 2>&1;then
+	echo "Warning: rbldns and walldns can't work on the same"
+	echo "IP address. You have to edit either /etc/rbldns/env/IP"
+	echo "or /etc/walldns/env/IP."
+fi
+
+%preun -n rbldns
+if [ "$1" = "0" ]; then
+	svc -d /service/rbldns
+fi
+
 %postun -n rbldns
 if [ "$1" = "0" ]; then
 	/usr/sbin/userdel rbldns
@@ -607,6 +742,11 @@ if [ -n "`id -u axfrdns 2>/dev/null`" ]; then
 	fi
 else
 	%{_sbindir}/useradd -u 38 -r -d /etc/axfrdns -s /bin/false -c "djbdns User" -g djbdns axfrdns 1>&2
+fi
+
+%preun -n axfrdns
+if [ "$1" = "0" ]; then
+	svc -d /service/axfrdns
 fi
 
 %postun -n axfrdns
