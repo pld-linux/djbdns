@@ -74,6 +74,20 @@ install walldns-conf	$RPM_BUILD_ROOT%{_bindir}
 
 gzip -9nf CHANGES TODO MULTIPLEIP TINYDNS
 
+%pre
+grep -q tinydns /etc/group || (
+	/usr/sbin/groupadd -g 59 -r -f tinydns 1>&2 || :
+)
+grep -q tinydns /etc/passwd || (
+	/usr/sbin/useradd -M -o -r -u 59 -s /bin/false \
+	-g tinydns -c "djbdns daemon" -d /etc/tinydns tinydns 1>&2 || :
+)
+grep -q dnslog /etc/passwd || (
+	/usr/sbin/useradd -M -o -r -u 60 -s /bin/false \
+	-g tinydns -c "djbdns deamon" -d /etc/tinydns dnslog 1>&2 || :
+)
+		
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
