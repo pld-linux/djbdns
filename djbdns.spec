@@ -2,7 +2,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	16
+Release:	17
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -22,6 +22,8 @@ Patch4:		%{name}-srv.patch
 Patch5:		%{name}-glibc.patch
 # http://www.iecc.com/rbldns-patch.txt
 Patch6:         %{name}-rbldns_a.patch
+# http://tinydns.org/djbdns-1.05-ignoreip.patch
+Patch7:         %{name}-ignoreip.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
 Requires(pre):	/usr/bin/getgid
@@ -330,6 +332,7 @@ informacji.
 %patch4 -p1
 %patch5
 %patch6 -p1
+%patch7 -p1
 cd doc
 ln -s merge/djbdns/* .
 
@@ -393,6 +396,7 @@ echo 127.0.0.1                   >env/IP
 echo 0.0.0.0                     >env/IPSEND
 echo 1000000                     >env/CACHESIZE
 echo 3000000                     >env/DATALIMIT
+touch env/IGNOREIP
 cat>run<<___
 #!/bin/sh
 exec 2>&1
