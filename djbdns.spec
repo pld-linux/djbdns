@@ -1,15 +1,16 @@
-Summary:     	DJB DNS 
-Summary(pl): 	DJB DNS
-Name:        	djbdns
-Version:     	1.05
-Release:     	2
-Group:       	Networking/Daemons
-Group(pl):   	Sieciowe/Serwery
-Copyright:   	GPL
-URL:         	http://cr.yp.to/djbdns.html
-Source0:      	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
+Summary:	DJB DNS 
+Summary(pl):	DJB DNS
+Name:		djbdns
+Version:	1.05
+Release:	2
+License:	GPL
+Group:		Networking/Daemons
+Group(de):	Netzwerkwesen/Server
+Group(pl):	Sieciowe/Serwery
+Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
 Source1:	%{name}-doc.tar.gz
 Patch0:		dnscache-1.05-multiple-ip.patch
+URL:		http://cr.yp.to/djbdns.html
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -27,13 +28,12 @@ cd doc
 ln -s merge/djbdns/* .
 
 %build
-echo %{__cc} %{?debug:-O0 -g}%{!?debug:$RPM_OPT_FLAGS} >conf-cc
+echo %{__cc} %{rpmcflags} >conf-cc
 echo /usr >conf-home
 %{__make} 
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_sysconfdir}}
 
 install dnsroots.global $RPM_BUILD_ROOT%{_sysconfdir}
