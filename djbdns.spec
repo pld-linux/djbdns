@@ -3,7 +3,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	17
+Release:	18
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -15,16 +15,13 @@ Source2:	ftp://ftp.innominate.org/gpa/djb/%{name}-%{version}-man.tar.gz
 Source3:	http://www.sericyb.com.au/tinydns-notify
 # NoSource3-md5:	2213bdc8c58c10cb8770b7e5b0d67aea
 Patch0:		dnscache-1.05-multiple-ip.patch
-Patch1:		http://www.fefe.de/dns/%{name}-1.05-ipv6.diff
-#		based on http://www.ohse.de/uwe/patches/djbdns-1.05-multiip.diff
-Patch2:		%{name}-1.05-multiip.diff
+# adds IPv6 support
+Patch1:		http://www.fefe.de/dns/%{name}-1.05-test21.diff.bz2
 Patch3:		http://iksz.hu/package/djbdns-conf/djbdns-1.05-multi_tinydns_data.patch
 Patch4:		%{name}-srv.patch
 Patch5:		%{name}-glibc.patch
 # http://www.iecc.com/rbldns-patch.txt
 Patch6:         %{name}-rbldns_a.patch
-# http://tinydns.org/djbdns-1.05-ignoreip.patch
-Patch7:         %{name}-ignoreip.patch
 # http://core.segfault.pl/~hobbit/tinydns-include.patch
 Patch8:		%{name}-tinydns-include.patch
 URL:		http://cr.yp.to/djbdns.html
@@ -330,14 +327,12 @@ informacji.
 %prep
 %setup -q -a1 -a2
 
-%patch0 -p1
 %patch1 -p1
-%patch2 -p1
+%patch0 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5
 %patch6 -p1
-%patch7 -p1
 %patch8 -p1
 cd doc
 ln -s merge/djbdns/* .
