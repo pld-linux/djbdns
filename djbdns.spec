@@ -21,6 +21,7 @@ Patch3:		http://iksz.hu/package/djbdns-conf/djbdns-1.05-multi_tinydns_data.patch
 Patch4:		%{name}-srv.patch
 Patch5:		%{name}-glibc.patch
 URL:		http://cr.yp.to/djbdns.html
+BuildRequires:	rpm-perlprov
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
@@ -153,16 +154,13 @@ lokalnie skonfigurowanych informacji.
 
 %package tinydns-notify
 Summary:	DNS NOTIFY sending tool
-Summary(de):	DNS NOTIFY sending tool
 Summary(pl):	Narzêdzie do wysy³ania komunikatów DNS NOTIFY
 Group:		Networking/Daemons
 License:	Free to use
 URL:		http://www.sericyb.com.au/tinydns-notify
 PreReq:		%{name} = %{version}
-BuildRequires:	rpm-perlprov
 Requires:	perl-Socket
 Requires:	perl-Net-DNS
-BuildArch:	noarch
 Obsoletes:	tinydns-notify
 
 %description tinydns-notify
@@ -171,10 +169,10 @@ and their nameservers from tinydns-data files and sends DNS NOTIFY
 requests to nameservers listed in notify-list file.
 
 %description tinydns-notify -l pl
-tinydns-notify jest napisanym w Perlu narzedziem, ktore czyta
-pliki stref i odpowiadajace im serwery nazw z plikow tinydns-data,
-a nastepnie wysyla zadania NOTIFY do serwerow wyspecyfikowanych
-w pliku notify-list.
+tinydns-notify jest napisanym w Perlu narzêdziem, które czyta pliki
+stref i odpowiadaj±ce im serwery nazw z plików tinydns-data, a
+nastêpnie wysy³a ¿±dania NOTIFY do serwerów wyspecyfikowanych w pliku
+notify-list.
 
 %package pickdns
 Summary:	DJB's load-balancing DNS server
