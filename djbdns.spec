@@ -75,18 +75,31 @@ install walldns-conf	$RPM_BUILD_ROOT%{_bindir}
 gzip -9nf CHANGES TODO MULTIPLEIP TINYDNS
 
 %pre
-grep -q tinydns /etc/group || (
-	/usr/sbin/groupadd -g 59 -r -f tinydns 1>&2 || :
-)
-grep -q tinydns /etc/passwd || (
-	/usr/sbin/useradd -M -o -r -u 59 -s /bin/false \
-	-g tinydns -c "djbdns daemon" -d /etc/tinydns tinydns 1>&2 || :
-)
-grep -q dnslog /etc/passwd || (
-	/usr/sbin/useradd -M -o -r -u 60 -s /bin/false \
-	-g tinydns -c "djbdns deamon" -d /etc/tinydns dnslog 1>&2 || :
-)
-		
+if [ -n "`getgid tinydns`" ]; then
+	if [ "`getgid tinydns`" != "59" ]; then
+		echo "Warning: group tinydns haven't gid=59. Correct this before installing djbdns" 1>&2
+		exit 1
+	fi
+else
+	/usr/sbin/groupadd -g 59 -r -f tinydns
+fi
+if [ -n "`id -u tinydns 2>/dev/null`" ]; then
+	if [ "`id -u tinydns`" != "59" ]; then
+		echo "Warning: user tinydns haven't uid=59. Correct this before installing djbdns" 1>&2
+		exit 1
+	fi
+else
+	/usr/sbin/useradd -u 59 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g tinydns tinydns 1>&2
+fi
+if [ -n "`id -u dnslog 2>/dev/null`" ]; then
+	if [ "`id -u dnslog`" != "60" ]; then
+		echo "Warning: user dnslog haven't uid=60. Correct this before installing djbdns" 1>&2
+		exit 1
+	fi
+else
+	/usr/sbin/useradd -u 60 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g tinydns dnslog 1>&2
+fi
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
