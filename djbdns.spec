@@ -8,7 +8,9 @@ Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
 # Source0-md5:	3147c5cd56832aa3b41955c7a51cbeb2
 Source1:	%{name}-doc.tar.gz
+# Source1-md5:	1d6aed1a5d3d3eda3958fa3e7d808fc8
 Source2:	ftp://ftp.innominate.org/gpa/djb/%{name}-%{version}-man.tar.gz
+# Source2-md5:	2b4e71fa4592858e4508538f78d50f61
 Patch0:		dnscache-1.05-multiple-ip.patch
 Patch1:		http://www.fefe.de/dns/%{name}-1.05-ipv6.diff
 #		based on http://www.ohse.de/uwe/patches/djbdns-1.05-multiip.diff
