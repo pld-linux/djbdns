@@ -2,8 +2,8 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	7
-License:	GPL
+Release:	8
+License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
@@ -72,7 +72,7 @@ Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
-Requires:	daemontools
+Requires:	daemontools >= 0.70-5
 Prereq:		fileutils
 Prereq:		shadow
 
@@ -104,7 +104,7 @@ Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
-Requires:	daemontools
+Requires:	daemontools >= 0.70-5
 Requires:	make
 Prereq:		shadow
 
@@ -131,7 +131,7 @@ Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
-Requires:	daemontools
+Requires:	daemontools >= 0.70-5
 Requires:	make
 Prereq:		shadow
 
@@ -161,7 +161,7 @@ Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
-Requires:	daemontools
+Requires:	daemontools >= 0.70-5
 Prereq:		shadow
 
 %description -n walldns
@@ -190,7 +190,7 @@ Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
-Requires:	daemontools
+Requires:	daemontools >= 0.70-5
 Requires:	make
 Prereq:		shadow
 
@@ -222,7 +222,7 @@ Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
 Requires:	tinydns = %{version}
-Requires:	daemontools
+Requires:	daemontools >= 0.70-5
 Requires:	ucspi-tcp
 Requires:	make
 Prereq:		shadow
@@ -490,14 +490,14 @@ cat>tcp<<___
 ___
 
 ##### daemontools symlinks #####
-install -d $RPM_BUILD_ROOT/var/run/service
-cd $RPM_BUILD_ROOT/var/run/service
-ln -s ../../..%{_sysconfdir}/dnscache
-ln -s ../../..%{_sysconfdir}/tinydns
-ln -s ../../..%{_sysconfdir}/pickdns
-ln -s ../../..%{_sysconfdir}/walldns
-ln -s ../../..%{_sysconfdir}/rbldns
-ln -s ../../..%{_sysconfdir}/axfrdns
+install -d $RPM_BUILD_ROOT/service
+cd $RPM_BUILD_ROOT/service
+ln -s ..%{_sysconfdir}/dnscache
+ln -s ..%{_sysconfdir}/tinydns
+ln -s ..%{_sysconfdir}/pickdns
+ln -s ..%{_sysconfdir}/walldns
+ln -s ..%{_sysconfdir}/rbldns
+ln -s ..%{_sysconfdir}/axfrdns
 
 %pre
 if [ -n "`getgid djbdns`" ]; then
@@ -644,7 +644,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %attr(644,root,root) %{_sysconfdir}/dnscache/root/servers/*
 %ghost %attr(600,root,root) %{_sysconfdir}/dnscache/seed
 %{_mandir}/man8/dnscache*
-/var/run/service/dnscache
+/service/dnscache
 
 %files -n tinydns
 %defattr(644,root,root,755)
@@ -662,7 +662,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %attr(644,root,root) %{_sysconfdir}/tinydns/root/data
 %attr(755,root,root) %{_sysconfdir}/tinydns/root/add-*
 %{_mandir}/man8/tinydns*
-/var/run/service/tinydns
+/service/tinydns
 
 %files -n pickdns
 %defattr(644,root,root,755)
@@ -679,7 +679,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_sysconfdir}/pickdns/root/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/pickdns/root/data
 %{_mandir}/man8/pickdns*
-/var/run/service/pickdns
+/service/pickdns
 
 %files -n walldns
 %defattr(644,root,root,755)
@@ -694,7 +694,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sysconfdir}/walldns/run
 %dir %attr(2755,root,root) %{_sysconfdir}/walldns/root
 %{_mandir}/man8/walldns*
-/var/run/service/walldns
+/service/walldns
 
 %files -n rbldns
 %defattr(644,root,root,755)
@@ -711,7 +711,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_sysconfdir}/rbldns/root/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/rbldns/root/data
 %{_mandir}/man8/rbldns*
-/var/run/service/rbldns
+/service/rbldns
 
 %files -n axfrdns
 %defattr(644,root,root,755)
@@ -727,4 +727,4 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_sysconfdir}/axfrdns/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/axfrdns/tcp
 %{_mandir}/man8/axfrdns*
-/var/run/service/axfrdns
+/service/axfrdns
