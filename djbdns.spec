@@ -1,4 +1,4 @@
-Summary:	DJB DNS 
+Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
@@ -242,7 +242,7 @@ ln -s merge/djbdns/* .
 %build
 echo %{__cc} %{rpmcflags} >conf-cc
 echo %{_prefix} > conf-home
-%{__make} 
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
