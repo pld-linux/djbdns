@@ -10,6 +10,7 @@ Group(pl):	Sieciowe/Serwery
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
 Source1:	%{name}-doc.tar.gz
 Patch0:		dnscache-1.05-multiple-ip.patch
+Patch1:		http://www.fefe.de/dns/djbdns-1.05-ipv6.diff
 URL:		http://cr.yp.to/djbdns.html
 Prereq:		shadow
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -243,7 +244,7 @@ informacji.
 %prep
 %setup -q -a1
 %patch0 -p1
-
+%patch1 -p1
 cd doc
 ln -s merge/djbdns/* .
 
