@@ -507,7 +507,7 @@ data.cdb: data
 	%{_bindir}/rbldns-data
 ___
 cat>data<<___
-# example 
+# example
 # :127.0.0.2:blacklisted"
 # 1.2.3.0/24
 ___
