@@ -16,9 +16,13 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 DJB DNS Tools.
+This is DNS server with security in mind. If you find a security hole
+you can get a prize.
 
 %description -l pl
 Narzêdzia DJB do obs³ugi DNS.
+Jest to alternatywny server DNS'u, którego g³ównym celem jest bezpieczeñstwo.
+Za znalezienie dziury w tym programie zosta³a wyznaczona nawet nagroda.
 
 %prep
 %setup -q -a1
