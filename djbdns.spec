@@ -33,7 +33,7 @@ Patch6:		%{name}-rbldns_a.patch
 Patch8:		%{name}-tinydns-include.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
-BuildRequires:	rpmbuild(macros) >= 1.159
+BuildRequires:	rpmbuild(macros) >= 1.202
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -604,22 +604,8 @@ ln -s ..%{_sysconfdir}/axfrdns
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`getgid djbdns`" ]; then
-	if [ "`getgid djbdns`" != "32" ]; then
-		echo "Error: group djbdns doesn't have gid=32. Correct this before installing djbdns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 32 -r -f djbdns
-fi
-if [ -n "`id -u dnslog 2>/dev/null`" ]; then
-	if [ "`id -u dnslog`" != "32" ]; then
-		echo "Error: user dnslog doesn't have uid=32. Correct this before installing djbdns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 32 -r -d / -s /bin/false -c "djbdns User" -g djbdns dnslog 1>&2
-fi
+%groupadd -g 32 -r -f djbdns
+%useradd -u 32 -r -d / -s /bin/false -c "djbdns User" -g djbdns dnslog
 
 %postun
 if [ "$1" = "0" ]; then
@@ -628,14 +614,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %pre dnscache
-if [ -n "`id -u dnscache 2>/dev/null`" ]; then
-	if [ "`id -u dnscache`" != "33" ]; then
-		echo "Error: user dnscache doesn't have uid=33. Correct this before installing djbdns-dnscache." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 33 -r -d /etc/dnscache -s /bin/false -c "djbdns User" -g djbdns dnscache 1>&2
-fi
+%useradd -P %{name}-dnscache -u 33 -r -d /etc/dnscache -s /bin/false -c "djbdns User" -g djbdns dnscache
 
 %post dnscache
 if [ \! -s /etc/dnscache/seed ]; then
@@ -673,14 +652,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %pre tinydns
-if [ -n "`id -u tinydns 2>/dev/null`" ]; then
-	if [ "`id -u tinydns`" != "34" ]; then
-		echo "Error: user tinydns doesn't have uid=34. Correct this before installing djbdns-tinydns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 34 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g djbdns tinydns 1>&2
-fi
+%useradd -P %{name}-tinydns -u 34 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g djbdns tinydns
 
 %post tinydns
 if diff -u /etc/{dnscache,tinydns}/env/IP >/dev/zero 2>&1;then
@@ -715,14 +687,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %pre pickdns
-if [ -n "`id -u pickdns 2>/dev/null`" ]; then
-	if [ "`id -u pickdns`" != "35" ]; then
-		echo "Error: user pickdns doesn't have uid=35. Correct this before installing djbdns-pickdns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 35 -r -d /etc/pickdns -s /bin/false -c "djbdns User" -g djbdns pickdns 1>&2
-fi
+%useradd -P %{name}-pickdns -u 35 -r -d /etc/pickdns -s /bin/false -c "djbdns User" -g djbdns pickdns
 
 %post pickdns
 if diff -u /etc/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
@@ -757,14 +722,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %pre walldns
-if [ -n "`id -u walldns 2>/dev/null`" ]; then
-	if [ "`id -u walldns`" != "36" ]; then
-		echo "Error: user walldns doesn't have uid=36. Correct this before installing djbdns-walldns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 36 -r -d /etc/walldns -s /bin/false -c "djbdns User" -g djbdns walldns 1>&2
-fi
+%useradd -P %{name}-walldns -u 36 -r -d /etc/walldns -s /bin/false -c "djbdns User" -g djbdns walldns
 
 %post walldns
 if diff -u /etc/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
@@ -799,14 +757,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %pre rbldns
-if [ -n "`id -u rbldns 2>/dev/null`" ]; then
-	if [ "`id -u rbldns`" != "37" ]; then
-		echo "Error: user rbldns doesn't have uid=37. Correct this before installing djbdns-rbldns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 37 -r -d /etc/rbldns -s /bin/false -c "djbdns User" -g djbdns rbldns 1>&2
-fi
+%useradd -P %{name}-rbldns -u 37 -r -d /etc/rbldns -s /bin/false -c "djbdns User" -g djbdns rbldns
 
 %post rbldns
 if diff -u /etc/{dnscache,rbldns}/env/IP >/dev/zero 2>&1;then
@@ -841,14 +792,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %pre axfrdns
-if [ -n "`id -u axfrdns 2>/dev/null`" ]; then
-	if [ "`id -u axfrdns`" != "38" ]; then
-		echo "Error: user axfrdns doesn't have uid=38. Correct this before installing djbdns-axfrdns." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 38 -r -d /etc/axfrdns -s /bin/false -c "djbdns User" -g djbdns axfrdns 1>&2
-fi
+%useradd -P %{name}-axfrdns -u 38 -r -d /etc/axfrdns -s /bin/false -c "djbdns User" -g djbdns axfrdns
 
 %preun axfrdns
 if [ "$1" = "0" ]; then
