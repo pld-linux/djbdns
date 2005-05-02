@@ -24,7 +24,7 @@ Source4:	http://www.sericyb.com.au/tinydns-log
 Patch0:		dnscache-1.05-multiple-ip.patch
 # adds IPv6 support
 Patch1:		http://www.fefe.de/dns/%{name}-1.05-test21.diff.bz2
-Patch3:		http://iksz.hu/package/djbdns-conf/djbdns-1.05-multi_tinydns_data.patch
+Patch3:		http://iksz.hu/package/djbdns-conf/%{name}-1.05-multi_tinydns_data.patch
 Patch4:		%{name}-srv.patch
 Patch5:		%{name}-glibc.patch
 # http://www.iecc.com/rbldns-patch.txt
@@ -177,8 +177,8 @@ Requires:	perl-Net-DNS
 Obsoletes:	tinydns-notify
 
 %description tinydns-notify
-tinydns-notify is a tool written in Perl, which extracts zones
-and their nameservers from tinydns-data files and sends DNS NOTIFY
+tinydns-notify is a tool written in Perl, which extracts zones and
+their nameservers from tinydns-data files and sends DNS NOTIFY
 requests to nameservers listed in notify-list file.
 
 %description tinydns-notify -l pl
