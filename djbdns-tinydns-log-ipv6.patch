@@ -1,0 +1,23 @@
+--- ./tinydns-log~	2005-05-03 13:00:43.000000000 +0300
++++ ./tinydns-log	2005-05-03 13:00:45.000000000 +0300
+@@ -10,7 +10,7 @@
+ # to support axfrdns logs as well as tinydns logs
+ 
+ # convert addresses in hex to dotted decimal notation.
+-s/\b([a-f0-9]{8})\b/join(".", unpack("C*", pack("H8", $1)))/eg;
++s/(?:00000000000000000000ffff|\b)([a-f0-9]{8})\b/join(".", unpack("C*", pack("H8", $1)))/eg;
+ 
+ ### clean up some messages
+ # convert stuff like 127.0.0.2:0422:05be to something more descriptive.
+--- ./tinydns-log~	2005-05-03 13:12:45.000000000 +0300
++++ ./tinydns-log	2005-05-03 13:12:46.000000000 +0300
+@@ -9,6 +9,9 @@
+ # modified 26-AUG-2002 by Andrew Pam <xanni@sericyb.com.au>
+ # to support axfrdns logs as well as tinydns logs
+ 
++# turn off buffering
++$| = 1;
++
+ # convert addresses in hex to dotted decimal notation.
+ s/(?:00000000000000000000ffff|\b)([a-f0-9]{8})\b/join(".", unpack("C*", pack("H8", $1)))/eg;
+ 
