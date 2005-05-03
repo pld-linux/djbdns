@@ -1,0 +1,8 @@
+- add http://www.fefe.de/dns/djbdns-1.05-ipv6.diff
+  (The current version adds support for AAAA records (those are the DNS records
+  that store IPv6 numbers). tinydns-conf will now create /etc/tinydns/add-host6
+  and /etc/tinydns/add-alias6, and data can now contain records of type "6"
+  and "+". Also, dnsq now understand AAAA records and a new program called
+  "dnsip6" is the IPv6 equivalent of the old dnsip. Automatic internal lookup
+  of some reserved IPv6 addresses (like "::1").
+  There is also experimental IPv6 transport support.)
