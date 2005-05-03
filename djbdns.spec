@@ -8,7 +8,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	18.2
+Release:	18.4
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -31,6 +31,7 @@ Patch5:		%{name}-glibc.patch
 Patch6:		%{name}-rbldns_a.patch
 # http://core.segfault.pl/~hobbit/tinydns-include.patch
 Patch8:		%{name}-tinydns-include.patch
+Patch9:		%{name}-tinydns-log-ipv6.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
@@ -334,6 +335,8 @@ informacji.
 
 %prep
 %setup -q -a1 -a2
+install %{SOURCE3} .
+install %{SOURCE4} .
 
 %patch1 -p1
 %patch0 -p1
@@ -342,6 +345,7 @@ informacji.
 %patch5
 %patch6 -p1
 %patch8 -p1
+%patch9 -p1
 cd doc
 ln -s merge/djbdns/* .
 
@@ -355,8 +359,8 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_sysconfdir}}
 install -d $RPM_BUILD_ROOT%{_mandir}/{man1,man5,man8}
 
-install %{SOURCE3}	$RPM_BUILD_ROOT%{_bindir}
-install %{SOURCE4}	$RPM_BUILD_ROOT%{_bindir}
+install tinydns-notify	$RPM_BUILD_ROOT%{_bindir}
+install tinydns-log		$RPM_BUILD_ROOT%{_bindir}
 
 install dnsroots.global $RPM_BUILD_ROOT%{_sysconfdir}
 install	axfr-get	$RPM_BUILD_ROOT%{_bindir}
