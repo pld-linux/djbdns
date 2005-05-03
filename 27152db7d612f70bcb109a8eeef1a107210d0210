@@ -1,0 +1,2 @@
+- added tinydns-log
+- remove rts install (some testsuite and it's not packaged)
