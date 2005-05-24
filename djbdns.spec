@@ -8,7 +8,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	18.4
+Release:	18.5
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -849,7 +849,7 @@ fi
 %config %attr(644,root,root) %{_sysconfdir}/tinydns/env/*
 %attr(755,root,root) %{_sysconfdir}/tinydns/run
 %dir %attr(2755,root,root) %{_sysconfdir}/tinydns/root
-%attr(644,root,root) %{_sysconfdir}/tinydns/root/Makefile
+%config(noreplace) %verify(not md5 mtime size) %attr(644,root,root) %{_sysconfdir}/tinydns/root/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/tinydns/root/data
 %attr(755,root,root) %{_sysconfdir}/tinydns/root/add-*
 %{_mandir}/man8/tinydns*
@@ -871,7 +871,7 @@ fi
 %config %attr(644,root,root) %{_sysconfdir}/pickdns/env/*
 %attr(755,root,root) %{_sysconfdir}/pickdns/run
 %dir %attr(2755,root,root) %{_sysconfdir}/pickdns/root
-%attr(644,root,root) %{_sysconfdir}/pickdns/root/Makefile
+%config(noreplace) %verify(not md5 mtime size) %attr(644,root,root) %{_sysconfdir}/pickdns/root/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/pickdns/root/data
 %{_mandir}/man8/pickdns*
 /service/pickdns
@@ -903,7 +903,7 @@ fi
 %config %attr(644,root,root) %{_sysconfdir}/rbldns/env/*
 %attr(755,root,root) %{_sysconfdir}/rbldns/run
 %dir %attr(2755,root,root) %{_sysconfdir}/rbldns/root
-%attr(644,root,root) %{_sysconfdir}/rbldns/root/Makefile
+%config(noreplace) %verify(not md5 mtime size) %attr(644,root,root) %{_sysconfdir}/rbldns/root/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/rbldns/root/data
 %{_mandir}/man8/rbldns*
 /service/rbldns
@@ -919,7 +919,7 @@ fi
 %dir %attr(2755,root,root) %{_sysconfdir}/axfrdns/env
 %config %attr(644,root,root) %{_sysconfdir}/axfrdns/env/*
 %attr(755,root,root) %{_sysconfdir}/axfrdns/run
-%attr(644,root,root) %{_sysconfdir}/axfrdns/Makefile
+%config(noreplace) %verify(not md5 mtime size) %attr(644,root,root) %{_sysconfdir}/axfrdns/Makefile
 %config %attr(644,root,root) %{_sysconfdir}/axfrdns/tcp
 %{_mandir}/man8/axfrdns*
 /service/axfrdns
