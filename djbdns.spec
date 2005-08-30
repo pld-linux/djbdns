@@ -23,7 +23,7 @@ Source4:	http://www.sericyb.com.au/tinydns-log
 # NoSource4-md5:	a9af7707a7cb7c41e855f441e242e422
 Patch0:		dnscache-1.05-multiple-ip.patch
 # adds IPv6 support
-Patch1:		http://www.fefe.de/dns/%{name}-1.05-test21.diff.bz2
+Patch1:		http://www.fefe.de/dns/%{name}-1.05-test22.diff.bz2
 Patch3:		http://iksz.hu/package/djbdns-conf/%{name}-1.05-multi_tinydns_data.patch
 Patch4:		%{name}-srv.patch
 Patch5:		%{name}-glibc.patch
