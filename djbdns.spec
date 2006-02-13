@@ -1,6 +1,4 @@
 # TODO
-#  - bcond patches
-#   - why bcond them?
 #  - warning: Installed (but unpackaged) file(s) found:
 #   /etc/rbldns/data
 #   /usr/bin/random-ip
@@ -35,12 +33,12 @@ Patch9:		%{name}-tinydns-log-ipv6.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/groupdel
-Requires(postun):	/usr/sbin/userdel
 Provides:	group(djbdns)
 Provides:	nameserver
 Provides:	user(dnslog)
@@ -100,15 +98,15 @@ Summary:	DJB's local DNS cache
 Summary(de):	DJBs lokaler DNS-Cache
 Summary(pl):	Lokalny cache DNS od DJB
 Group:		Networking/Daemons
-PreReq:		%{name} = %{version}
+Requires(post):	diffutils
+Requires(post):	fileutils
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
-Requires(postun):	/usr/sbin/groupdel
-Requires(post):	diffutils
-Requires(post):	fileutils
 Requires(preun):	daemontools
+Requires:	%{name} = %{version}
 Requires:	daemontools >= 0.70-5
 Provides:	user(dnscache)
 Obsoletes:	dnscache
@@ -138,14 +136,14 @@ Summary:	DJB's DNS server
 Summary(de):	DJBs DNS-Server
 Summary(pl):	Serwer DNS od DJB
 Group:		Networking/Daemons
-PreReq:		%{name} = %{version}
+Requires(post):	diffutils
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
-Requires(postun):	/usr/sbin/groupdel
-Requires(post):	diffutils
 Requires(preun):	daemontools
+Requires:	%{name} = %{version}
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Provides:	user(tinydns)
@@ -169,12 +167,12 @@ lokalnie skonfigurowanych informacji.
 %package tinydns-notify
 Summary:	DNS NOTIFY sending tool
 Summary(pl):	Narzêdzie do wysy³ania komunikatów DNS NOTIFY
-Group:		Networking/Daemons
 License:	Free to use
+Group:		Networking/Daemons
 URL:		http://www.sericyb.com.au/tinydns-notify
-PreReq:		%{name} = %{version}
-Requires:	perl-modules
+Requires:	%{name} = %{version}
 Requires:	perl-Net-DNS
+Requires:	perl-modules
 Obsoletes:	tinydns-notify
 
 %description tinydns-notify
@@ -193,14 +191,14 @@ Summary:	DJB's load-balancing DNS server
 Summary(de):	DJBs Belastung ausgleichender DNS-Server
 Summary(pl):	Serwer DNS równowa¿±cy obci±¿enie od DJB
 Group:		Networking/Daemons
-PreReq:		%{name} = %{version}
+Requires(post):	diffutils
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
-Requires(postun):	/usr/sbin/groupdel
-Requires(post):	diffutils
 Requires(preun):	daemontools
+Requires:	%{name} = %{version}
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Provides:	user(pickdns)
@@ -229,14 +227,14 @@ Summary:	DJB's reverse DNS wall
 Summary(de):	DJBs Wand rückgekehrten DNSs
 Summary(pl):	¦ciana dla odwrotnych zapytañ DNS od DJB
 Group:		Networking/Daemons
-PreReq:		%{name} = %{version}
+Requires(post):	diffutils
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
-Requires(postun):	/usr/sbin/groupdel
-Requires(post):	diffutils
 Requires(preun):	daemontools
+Requires:	%{name} = %{version}
 Requires:	daemontools >= 0.70-5
 Provides:	user(walldns)
 Obsoletes:	walldns
@@ -264,14 +262,14 @@ Summary:	DJB's IP-address-listing DNS server
 Summary(de):	DJBs IP-Adressen-Listen-DNS-Server
 Summary(pl):	Serwer DNS list adresów IP od DJB
 Group:		Networking/Daemons
-PreReq:		%{name} = %{version}
+Requires(post):	diffutils
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
-Requires(postun):	/usr/sbin/groupdel
-Requires(post):	diffutils
 Requires(preun):	daemontools
+Requires:	%{name} = %{version}
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Provides:	user(rbldns)
@@ -302,13 +300,13 @@ Summary:	DJB's DNS zone-transfer server
 Summary(de):	DJBs DNS-Zonen-Transfer-Server
 Summary(pl):	Serwer transferów stref DNS od DJB
 Group:		Networking/Daemons
-PreReq:		%{name} = %{version}
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
-Requires(postun):	/usr/sbin/groupdel
 Requires(preun):	daemontools
+Requires:	%{name} = %{version}
 Requires:	%{name}-tinydns = %{version}
 Requires:	daemontools >= 0.70-5
 Requires:	make
