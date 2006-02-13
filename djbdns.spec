@@ -818,19 +818,20 @@ fi
 %files dnscache
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/dnscache*
-%config %attr(644,root,root) %{_sysconfdir}/dnsroots.global
+%config %{_sysconfdir}/dnsroots.global
 %dir %attr(3755,root,root) %{_sysconfdir}/dnscache
 %dir %attr(2755,root,root) %{_sysconfdir}/dnscache/log
 %dir %attr(2755,dnslog,djbdns) %{_sysconfdir}/dnscache/log/main
 %attr(644,dnslog,djbdns) %{_sysconfdir}/dnscache/log/status
 %dir %attr(2755,root,root) %{_sysconfdir}/dnscache/env
-%config %attr(644,root,root) %{_sysconfdir}/dnscache/env/*
+%config %{_sysconfdir}/dnscache/env/*
 %attr(755,root,root) %{_sysconfdir}/dnscache/run
 %attr(755,root,root) %{_sysconfdir}/dnscache/log/run
 %dir %attr(2755,root,root) %{_sysconfdir}/dnscache/root
+# FIXME no globs for suid/sgid files
 %dir %attr(2755,root,root) %{_sysconfdir}/dnscache/root/*
 %config %attr(600,root,root) %{_sysconfdir}/dnscache/root/ip/*
-%config %attr(644,root,root) %{_sysconfdir}/dnscache/root/servers/*
+%config %{_sysconfdir}/dnscache/root/servers/*
 %ghost %attr(600,root,root) %{_sysconfdir}/dnscache/seed
 %{_mandir}/man8/dnscache*
 /service/dnscache
@@ -844,11 +845,11 @@ fi
 %attr(644,dnslog,djbdns) %{_sysconfdir}/tinydns/log/status
 %attr(755,root,root) %{_sysconfdir}/tinydns/log/run
 %dir %attr(2755,root,root) %{_sysconfdir}/tinydns/env
-%config %attr(644,root,root) %{_sysconfdir}/tinydns/env/*
+%config %{_sysconfdir}/tinydns/env/*
 %attr(755,root,root) %{_sysconfdir}/tinydns/run
 %dir %attr(2755,root,root) %{_sysconfdir}/tinydns/root
-%config(noreplace) %verify(not md5 mtime size) %attr(644,root,root) %{_sysconfdir}/tinydns/root/Makefile
-%config %attr(644,root,root) %{_sysconfdir}/tinydns/root/data
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/tinydns/root/Makefile
+%config %{_sysconfdir}/tinydns/root/data
 %attr(755,root,root) %{_sysconfdir}/tinydns/root/add-*
 %{_mandir}/man8/tinydns*
 /service/tinydns
@@ -866,11 +867,11 @@ fi
 %attr(644,dnslog,djbdns) %{_sysconfdir}/pickdns/log/status
 %attr(755,root,root) %{_sysconfdir}/pickdns/log/run
 %dir %attr(2755,root,root) %{_sysconfdir}/pickdns/env
-%config %attr(644,root,root) %{_sysconfdir}/pickdns/env/*
+%config %{_sysconfdir}/pickdns/env/*
 %attr(755,root,root) %{_sysconfdir}/pickdns/run
 %dir %attr(2755,root,root) %{_sysconfdir}/pickdns/root
-%config(noreplace) %verify(not md5 mtime size) %attr(644,root,root) %{_sysconfdir}/pickdns/root/Makefile
-%config %attr(644,root,root) %{_sysconfdir}/pickdns/root/data
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pickdns/root/Makefile
+%config %{_sysconfdir}/pickdns/root/data
 %{_mandir}/man8/pickdns*
 /service/pickdns
 
@@ -883,7 +884,7 @@ fi
 %attr(644,dnslog,djbdns) %{_sysconfdir}/walldns/log/status
 %attr(755,root,root) %{_sysconfdir}/walldns/log/run
 %dir %attr(2755,root,root) %{_sysconfdir}/walldns/env
-%config %attr(644,root,root) %{_sysconfdir}/walldns/env/*
+%config %{_sysconfdir}/walldns/env/*
 %attr(755,root,root) %{_sysconfdir}/walldns/run
 %dir %attr(2755,root,root) %{_sysconfdir}/walldns/root
 %{_mandir}/man8/walldns*
@@ -898,11 +899,11 @@ fi
 %attr(644,dnslog,djbdns) %{_sysconfdir}/rbldns/log/status
 %attr(755,root,root) %{_sysconfdir}/rbldns/log/run
 %dir %attr(2755,root,root) %{_sysconfdir}/rbldns/env
-%config %attr(644,root,root) %{_sysconfdir}/rbldns/env/*
+%config %{_sysconfdir}/rbldns/env/*
 %attr(755,root,root) %{_sysconfdir}/rbldns/run
 %dir %attr(2755,root,root) %{_sysconfdir}/rbldns/root
-%config(noreplace) %verify(not md5 mtime size) %attr(644,root,root) %{_sysconfdir}/rbldns/root/Makefile
-%config %attr(644,root,root) %{_sysconfdir}/rbldns/root/data
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rbldns/root/Makefile
+%config %{_sysconfdir}/rbldns/root/data
 %{_mandir}/man8/rbldns*
 /service/rbldns
 
@@ -915,9 +916,9 @@ fi
 %attr(644,dnslog,djbdns) %{_sysconfdir}/axfrdns/log/status
 %attr(755,root,root) %{_sysconfdir}/axfrdns/log/run
 %dir %attr(2755,root,root) %{_sysconfdir}/axfrdns/env
-%config %attr(644,root,root) %{_sysconfdir}/axfrdns/env/*
+%config %{_sysconfdir}/axfrdns/env/*
 %attr(755,root,root) %{_sysconfdir}/axfrdns/run
-%config(noreplace) %verify(not md5 mtime size) %attr(644,root,root) %{_sysconfdir}/axfrdns/Makefile
-%config %attr(644,root,root) %{_sysconfdir}/axfrdns/tcp
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/axfrdns/Makefile
+%config %{_sysconfdir}/axfrdns/tcp
 %{_mandir}/man8/axfrdns*
 /service/axfrdns
