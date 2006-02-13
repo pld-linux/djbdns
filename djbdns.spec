@@ -6,7 +6,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	19
+Release:	20
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -396,11 +396,15 @@ install djbdns-man/*.8  $RPM_BUILD_ROOT%{_mandir}/man8
 
 ##### DNSCACHE #####
 
-mkdir $RPM_BUILD_ROOT%{_sysconfdir}/dnscache
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/dnscache/supervise
+install -d $RPM_BUILD_ROOT/var/log/djbdns/dnscache
+touch $RPM_BUILD_ROOT/var/log/djbdns/dnscache/{lock,state}
 cd $RPM_BUILD_ROOT%{_sysconfdir}/dnscache
-mkdir log
-mkdir log/main
-touch log/status
+install -d log/supervise
+touch log/supervise/{lock,status}
+mkfifo log/supervise/{control,ok}
+touch supervise/{lock,status}
+mkfifo supervise/{control,ok}
 mkdir env
 echo %{_sysconfdir}/dnscache/root>env/ROOT
 echo 127.0.0.1                   >env/IP
@@ -408,35 +412,39 @@ echo 0.0.0.0                     >env/IPSEND
 echo 1000000                     >env/CACHESIZE
 echo 3000000                     >env/DATALIMIT
 touch env/IGNOREIP
-cat>run<<___
+cat>run<<'___'
 #!/bin/sh
 exec 2>&1
 exec <seed
 exec envdir ./env sh -c '
-  exec envuidgid dnscache softlimit -o250 -d "\$DATALIMIT" %{_bindir}/dnscache
+  exec envuidgid dnscache softlimit -o250 -d "$DATALIMIT" %{_bindir}/dnscache
 '
 ___
-cat>log/run<<___
+cat>log/run<<'___'
 #!/bin/sh
-exec setuidgid dnslog multilog t ./main
+exec setuidgid dnslog multilog t /var/log/djbdns/dnscache
 ___
 mkdir root
 mkdir root/ip
 touch root/ip/127.0.0.1
 mkdir root/servers
-ln $RPM_BUILD_ROOT%{_sysconfdir}/dnsroots.global root/servers/\@
+ln $RPM_BUILD_ROOT%{_sysconfdir}/dnsroots.global root/servers/@
 dd if=/dev/zero of=seed bs=128c count=1
 
 ##### TINYDNS #####
 
-mkdir $RPM_BUILD_ROOT%{_sysconfdir}/tinydns
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/tinydns/supervise
+install -d $RPM_BUILD_ROOT/var/log/djbdns/tinydns
+touch $RPM_BUILD_ROOT/var/log/djbdns/tinydns/{lock,state}
 cd $RPM_BUILD_ROOT%{_sysconfdir}/tinydns
-mkdir log
-mkdir log/main
-touch log/status
+install -d log/supervise
+touch log/supervise/{lock,status}
+mkfifo log/supervise/{control,ok}
+touch supervise/{lock,status}
+mkfifo supervise/{control,ok}
 cat>log/run<<___
 #!/bin/sh
-exec setuidgid dnslog multilog t ./main
+exec setuidgid dnslog multilog t /var/log/djbdns/tinydns
 ___
 mkdir env
 echo %{_sysconfdir}/tinydns/root>env/ROOT
@@ -448,49 +456,53 @@ exec envuidgid tinydns envdir ./env softlimit -d300000 %{_bindir}/tinydns
 ___
 mkdir root
 touch root/data
-cat>root/add-ns<<___
+cat>root/add-ns<<'___'
 #!/bin/sh
-exec %{_bindir}/tinydns-edit data data.new add ns \${1+"\$@"}
+exec %{_bindir}/tinydns-edit data data.new add ns ${1+"$@"}
 ___
-cat>root/add-childns<<___
+cat>root/add-childns<<'___'
 #!/bin/sh
-exec %{_bindir}/tinydns-edit data data.new add childns \${1+"\$@"}
+exec %{_bindir}/tinydns-edit data data.new add childns ${1+"$@"}
 ___
-cat>root/add-host<<___
+cat>root/add-host<<'___'
 #!/bin/sh
-exec %{_bindir}/tinydns-edit data data.new add host \${1+"\$@"}
+exec %{_bindir}/tinydns-edit data data.new add host ${1+"$@"}
 ___
-cat>root/add-host6<<___
+cat>root/add-host6<<'___'
 #!/bin/sh
-exec %{_bindir}/tinydns-edit data data.new add host6 \${1+"\$@"}
+exec %{_bindir}/tinydns-edit data data.new add host6 ${1+"$@"}
 ___
-cat>root/add-alias<<___
+cat>root/add-alias<<'___'
 #!/bin/sh
-exec %{_bindir}/tinydns-edit data data.new add alias \${1+"\$@"}
+exec %{_bindir}/tinydns-edit data data.new add alias ${1+"$@"}
 ___
-cat>root/add-alias6<<___
+cat>root/add-alias6<<'___'
 #!/bin/sh
-exec %{_bindir}/tinydns-edit data data.new add alias6 \${1+"\$@"}
+exec %{_bindir}/tinydns-edit data data.new add alias6 ${1+"$@"}
 ___
-cat>root/add-mx<<___
+cat>root/add-mx<<'___'
 #!/bin/sh
-exec %{_bindir}/tinydns-edit data data.new add mx \${1+"\$@"}
+exec %{_bindir}/tinydns-edit data data.new add mx ${1+"$@"}
 ___
-cat>root/Makefile<<___
+cat>root/Makefile<<'___'
 data.cdb: data
 	%{_bindir}/tinydns-data
 ___
 
 ##### PICKDNS #####
 
-mkdir $RPM_BUILD_ROOT%{_sysconfdir}/pickdns
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/pickdns/supervise
+install -d $RPM_BUILD_ROOT/var/log/djbdns/pickdns
+touch $RPM_BUILD_ROOT/var/log/djbdns/pickdns/{lock,state}
 cd $RPM_BUILD_ROOT%{_sysconfdir}/pickdns
-mkdir log
-mkdir log/main
-touch log/status
+install -d log/supervise
+touch log/supervise/{lock,status}
+mkfifo log/supervise/{control,ok}
+touch supervise/{lock,status}
+mkfifo supervise/{control,ok}
 cat>log/run<<___
 #!/bin/sh
-exec setuidgid dnslog multilog t ./main
+exec setuidgid dnslog multilog t /var/log/djbdns/pickdns
 ___
 mkdir env
 echo %{_sysconfdir}/pickdns/root>env/ROOT
@@ -508,11 +520,15 @@ data.cdb: data
 ___
 
 ##### WALLDNS #####
-mkdir $RPM_BUILD_ROOT%{_sysconfdir}/walldns
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/walldns/supervise
+install -d $RPM_BUILD_ROOT/var/log/djbdns/walldns
+touch $RPM_BUILD_ROOT/var/log/djbdns/walldns/{lock,state}
 cd $RPM_BUILD_ROOT%{_sysconfdir}/walldns
-mkdir log
-mkdir log/main
-touch log/status
+install -d log/supervise
+touch log/supervise/{lock,status}
+mkfifo log/supervise/{control,ok}
+touch supervise/{lock,status}
+mkfifo supervise/{control,ok}
 cat>log/run<<___
 #!/bin/sh
 exec setuidgid dnslog multilog t ./main
@@ -529,14 +545,18 @@ mkdir root
 
 ##### RBLDNS #####
 
-mkdir $RPM_BUILD_ROOT%{_sysconfdir}/rbldns
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/rbldns/supervise
+install -d $RPM_BUILD_ROOT/var/log/djbdns/rbldns
+touch $RPM_BUILD_ROOT/var/log/djbdns/rbldns/{lock,state}
 cd $RPM_BUILD_ROOT%{_sysconfdir}/rbldns
-mkdir log
-mkdir log/main
-touch log/status
+install -d log/supervise
+touch log/supervise/{lock,status}
+mkfifo log/supervise/{control,ok}
+touch supervise/{lock,status}
+mkfifo supervise/{control,ok}
 cat>log/run<<___
 #!/bin/sh
-exec setuidgid dnslog multilog t ./main
+exec setuidgid dnslog multilog t /var/log/djbdns/rbldns
 ___
 mkdir env
 echo %{_sysconfdir}/rbldns/root>env/ROOT
@@ -564,23 +584,27 @@ ___
 
 ##### AXFRDNS #####
 
-mkdir $RPM_BUILD_ROOT%{_sysconfdir}/axfrdns
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/axfrdns/supervise
+install -d $RPM_BUILD_ROOT/var/log/djbdns/axfrdns
+touch $RPM_BUILD_ROOT/var/log/djbdns/axfrdns/{lock,state}
 cd $RPM_BUILD_ROOT%{_sysconfdir}/axfrdns
-mkdir log
-mkdir log/main
-touch log/status
+install -d log/supervise
+touch log/supervise/{lock,status}
+mkfifo log/supervise/{control,ok}
+touch supervise/{lock,status}
+mkfifo supervise/{control,ok}
 cat>log/run<<___
 #!/bin/sh
-exec setuidgid dnslog multilog t ./main
+exec setuidgid dnslog multilog t /var/log/djbdns/axfrdns
 ___
 mkdir env
 echo %{_sysconfdir}/tinydns/root>env/ROOT
 echo 127.0.0.1                  >env/IP
-cat>run<<___
+cat>run<<'___'
 #!/bin/sh
 exec 2>&1
 exec envdir ./env sh -c '
-  exec envuidgid axfrdns softlimit -d300000 tcpserver -vDRHl0 -x tcp.cdb -- "\$IP" 53 %{_bindir}/axfrdns
+  exec envuidgid axfrdns softlimit -d300000 tcpserver -vDRHl0 -x tcp.cdb -- "$IP" 53 %{_bindir}/axfrdns
 '
 ___
 cat>Makefile<<___
@@ -619,7 +643,7 @@ fi
 %useradd -P %{name}-dnscache -u 33 -r -d /etc/dnscache -s /bin/false -c "djbdns User" -g djbdns dnscache
 
 %post dnscache
-if [ \! -s /etc/dnscache/seed ]; then
+if [ ! -s /etc/dnscache/seed ]; then
 	dd if=/dev/urandom of=/etc/dnscache/seed bs=128c count=1
 fi
 if diff -u /etc/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
@@ -643,9 +667,18 @@ if diff -u /etc/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
 	echo "or /etc/walldns/env/IP."
 fi
 
+if [ -f /service/dnscache/supervise/lock ]; then
+	svc -t /service/dnscache{,/log}
+fi
+
 %preun dnscache
 if [ "$1" = "0" ]; then
-	svc -d /service/dnscache
+	# http://cr.yp.to/daemontools/faq/create.html#remove
+	if [ -f /service/dnscache/supervise/lock ]; then
+		cd /service/dnscache
+		rm /service/dnscache
+		svc -dx . log
+	fi
 fi
 
 %postun dnscache
@@ -678,9 +711,18 @@ if diff -u /etc/{tiny,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "or /etc/walldns/env/IP."
 fi
 
+if [ -f /service/tinydns/supervise/lock ]; then
+	svc -t /service/tinydns{,/log}
+fi
+
 %preun tinydns
 if [ "$1" = "0" ]; then
-	svc -d /service/tinydns
+	# http://cr.yp.to/daemontools/faq/create.html#remove
+	if [ -f /service/tinydns/supervise/lock ]; then
+		cd /service/tinydns
+		rm /service/tinydns
+		svc -dx . log
+	fi
 fi
 
 %postun tinydns
@@ -713,9 +755,18 @@ if diff -u /etc/{pick,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "or /etc/walldns/env/IP."
 fi
 
+if [ -f /service/pickdns/supervise/lock ]; then
+	svc -t /service/pickdns{,/log}
+fi
+
 %preun pickdns
 if [ "$1" = "0" ]; then
-	svc -d /service/pickdns
+	# http://cr.yp.to/daemontools/faq/create.html#remove
+	if [ -f /service/pickdns/supervise/lock ]; then
+		cd /service/pickdns
+		rm /service/pickdns
+		svc -dx . log
+	fi
 fi
 
 %postun pickdns
@@ -748,9 +799,18 @@ if diff -u /etc/{tiny,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "or /etc/walldns/env/IP."
 fi
 
+if [ -f /service/walldns/supervise/lock ]; then
+	svc -t /service/walldns{,/log}
+fi
+
 %preun walldns
 if [ "$1" = "0" ]; then
-	svc -d /service/walldns
+	# http://cr.yp.to/daemontools/faq/create.html#remove
+	if [ -f /service/walldns/supervise/lock ]; then
+		cd /service/walldns
+		rm /service/walldns
+		svc -dx . log
+	fi
 fi
 
 %postun walldns
@@ -783,9 +843,18 @@ if diff -u /etc/{rbl,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "or /etc/walldns/env/IP."
 fi
 
+if [ -f /service/rbldns/supervise/lock ]; then
+	svc -t /service/rbldns{,/log}
+fi
+
 %preun rbldns
 if [ "$1" = "0" ]; then
-	svc -d /service/rbldns
+	# http://cr.yp.to/daemontools/faq/create.html#remove
+	if [ -f /service/rbldns/supervise/lock ]; then
+		cd /service/rbldns
+		rm /service/rbldns
+		svc -dx . log
+	fi
 fi
 
 %postun rbldns
@@ -798,7 +867,12 @@ fi
 
 %preun axfrdns
 if [ "$1" = "0" ]; then
-	svc -d /service/axfrdns
+	# http://cr.yp.to/daemontools/faq/create.html#remove
+	if [ -f /service/axfrdns/supervise/lock ]; then
+		cd /service/axfrdns
+		rm /service/axfrdns
+		svc -dx . log
+	fi
 fi
 
 %postun axfrdns
@@ -814,19 +888,27 @@ fi
 %attr(755,root,root) %{_bindir}/axfr-get
 %{_mandir}/man[15]/*
 %{_mandir}/man8/axfr-get*
+%dir %attr(751,root,root) %dir /var/log/djbdns
 
 %files dnscache
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/dnscache*
 %config %{_sysconfdir}/dnsroots.global
-%dir %attr(3755,root,root) %{_sysconfdir}/dnscache
-%dir %attr(2755,root,root) %{_sysconfdir}/dnscache/log
-%dir %attr(2755,dnslog,djbdns) %{_sysconfdir}/dnscache/log/main
-%attr(644,dnslog,djbdns) %{_sysconfdir}/dnscache/log/status
+%dir %attr(1755,root,root) %{_sysconfdir}/dnscache
+%attr(700,root,root) %dir %{_sysconfdir}/dnscache/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/dnscache/supervise/*
+
+%dir %attr(1755,root,root) %{_sysconfdir}/dnscache/log
+%attr(755,root,root) %{_sysconfdir}/dnscache/log/run
+%attr(700,root,root) %dir %{_sysconfdir}/dnscache/log/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/dnscache/log/supervise/*
+%attr(751,dnslog,djbdns) %dir /var/log/djbdns/dnscache
+%attr(600,dnslog,djbdns) %ghost /var/log/djbdns/dnscache/lock
+%attr(640,dnslog,djbdns) %ghost /var/log/djbdns/dnscache/state
+
 %dir %attr(2755,root,root) %{_sysconfdir}/dnscache/env
 %config %{_sysconfdir}/dnscache/env/*
 %attr(755,root,root) %{_sysconfdir}/dnscache/run
-%attr(755,root,root) %{_sysconfdir}/dnscache/log/run
 %dir %attr(2755,root,root) %{_sysconfdir}/dnscache/root
 # FIXME no globs for suid/sgid files
 %dir %attr(2755,root,root) %{_sysconfdir}/dnscache/root/*
@@ -840,10 +922,17 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/tinydns*
 %dir %attr(3755,root,root) %{_sysconfdir}/tinydns
-%dir %attr(2755,root,root) %{_sysconfdir}/tinydns/log
-%dir %attr(2755,dnslog,djbdns) %{_sysconfdir}/tinydns/log/main
-%attr(644,dnslog,djbdns) %{_sysconfdir}/tinydns/log/status
+%attr(700,root,root) %dir %{_sysconfdir}/tinydns/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/tinydns/supervise/*
+
 %attr(755,root,root) %{_sysconfdir}/tinydns/log/run
+%dir %attr(1755,root,root) %{_sysconfdir}/tinydns/log
+%attr(700,root,root) %dir %{_sysconfdir}/tinydns/log/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/tinydns/log/supervise/*
+%attr(751,dnslog,djbdns) %dir /var/log/djbdns/tinydns
+%attr(600,dnslog,djbdns) %ghost /var/log/djbdns/tinydns/lock
+%attr(640,dnslog,djbdns) %ghost /var/log/djbdns/tinydns/state
+
 %dir %attr(2755,root,root) %{_sysconfdir}/tinydns/env
 %config %{_sysconfdir}/tinydns/env/*
 %attr(755,root,root) %{_sysconfdir}/tinydns/run
@@ -862,10 +951,17 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pickdns*
 %dir %attr(3755,root,root) %{_sysconfdir}/pickdns
-%dir %attr(2755,root,root) %{_sysconfdir}/pickdns/log
-%dir %attr(2755,dnslog,djbdns) %{_sysconfdir}/pickdns/log/main
-%attr(644,dnslog,djbdns) %{_sysconfdir}/pickdns/log/status
+%attr(700,root,root) %dir %{_sysconfdir}/pickdns/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/pickdns/supervise/*
+
 %attr(755,root,root) %{_sysconfdir}/pickdns/log/run
+%dir %attr(1755,root,root) %{_sysconfdir}/pickdns/log
+%attr(700,root,root) %dir %{_sysconfdir}/pickdns/log/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/pickdns/log/supervise/*
+%attr(751,dnslog,djbdns) %dir /var/log/djbdns/pickdns
+%attr(600,dnslog,djbdns) %ghost /var/log/djbdns/pickdns/lock
+%attr(640,dnslog,djbdns) %ghost /var/log/djbdns/pickdns/state
+
 %dir %attr(2755,root,root) %{_sysconfdir}/pickdns/env
 %config %{_sysconfdir}/pickdns/env/*
 %attr(755,root,root) %{_sysconfdir}/pickdns/run
@@ -879,10 +975,17 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/walldns*
 %dir %attr(3755,root,root) %{_sysconfdir}/walldns
-%dir %attr(2755,root,root) %{_sysconfdir}/walldns/log
-%dir %attr(2755,dnslog,djbdns) %{_sysconfdir}/walldns/log/main
-%attr(644,dnslog,djbdns) %{_sysconfdir}/walldns/log/status
+%attr(700,root,root) %dir %{_sysconfdir}/walldns/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/walldns/supervise/*
+
 %attr(755,root,root) %{_sysconfdir}/walldns/log/run
+%dir %attr(1755,root,root) %{_sysconfdir}/walldns/log
+%attr(700,root,root) %dir %{_sysconfdir}/walldns/log/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/walldns/log/supervise/*
+%attr(751,dnslog,djbdns) %dir /var/log/djbdns/walldns
+%attr(600,dnslog,djbdns) %ghost /var/log/djbdns/walldns/lock
+%attr(640,dnslog,djbdns) %ghost /var/log/djbdns/walldns/state
+
 %dir %attr(2755,root,root) %{_sysconfdir}/walldns/env
 %config %{_sysconfdir}/walldns/env/*
 %attr(755,root,root) %{_sysconfdir}/walldns/run
@@ -894,10 +997,17 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/rbldns*
 %dir %attr(3755,root,root) %{_sysconfdir}/rbldns
-%dir %attr(2755,root,root) %{_sysconfdir}/rbldns/log
-%dir %attr(2755,dnslog,djbdns) %{_sysconfdir}/rbldns/log/main
-%attr(644,dnslog,djbdns) %{_sysconfdir}/rbldns/log/status
+%attr(700,root,root) %dir %{_sysconfdir}/rbldns/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/rbldns/supervise/*
+
 %attr(755,root,root) %{_sysconfdir}/rbldns/log/run
+%dir %attr(1755,root,root) %{_sysconfdir}/rbldns/log
+%attr(700,root,root) %dir %{_sysconfdir}/rbldns/log/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/rbldns/log/supervise/*
+%attr(751,dnslog,djbdns) %dir /var/log/djbdns/rbldns
+%attr(600,dnslog,djbdns) %ghost /var/log/djbdns/rbldns/lock
+%attr(640,dnslog,djbdns) %ghost /var/log/djbdns/rbldns/state
+
 %dir %attr(2755,root,root) %{_sysconfdir}/rbldns/env
 %config %{_sysconfdir}/rbldns/env/*
 %attr(755,root,root) %{_sysconfdir}/rbldns/run
@@ -911,10 +1021,17 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/axfrdns*
 %dir %attr(3755,root,root) %{_sysconfdir}/axfrdns
-%dir %attr(2755,root,root) %{_sysconfdir}/axfrdns/log
-%dir %attr(2755,dnslog,djbdns) %{_sysconfdir}/axfrdns/log/main
-%attr(644,dnslog,djbdns) %{_sysconfdir}/axfrdns/log/status
+%attr(700,root,root) %dir %{_sysconfdir}/axfrdns/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/axfrdns/supervise/*
+
 %attr(755,root,root) %{_sysconfdir}/axfrdns/log/run
+%dir %attr(1755,root,root) %{_sysconfdir}/axfrdns/log
+%attr(700,root,root) %dir %{_sysconfdir}/axfrdns/log/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/axfrdns/log/supervise/*
+%attr(751,dnslog,djbdns) %dir /var/log/djbdns/axfrdns
+%attr(600,dnslog,djbdns) %ghost /var/log/djbdns/axfrdns/lock
+%attr(640,dnslog,djbdns) %ghost /var/log/djbdns/axfrdns/state
+
 %dir %attr(2755,root,root) %{_sysconfdir}/axfrdns/env
 %config %{_sysconfdir}/axfrdns/env/*
 %attr(755,root,root) %{_sysconfdir}/axfrdns/run
