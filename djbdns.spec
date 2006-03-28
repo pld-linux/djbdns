@@ -6,7 +6,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	20
+Release:	21
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -30,6 +30,8 @@ Patch6:		%{name}-rbldns_a.patch
 # http://core.segfault.pl/~hobbit/tinydns-include.patch
 Patch8:		%{name}-tinydns-include.patch
 Patch9:		%{name}-tinydns-log-ipv6.patch
+# http://romana.now.ie/software/djbdns-cachestats.patch
+Patch10:	%{name}-cachestats.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
@@ -344,6 +346,7 @@ install %{SOURCE4} .
 %patch6 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 cd doc
 ln -s merge/djbdns/* .
 
