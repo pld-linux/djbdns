@@ -902,7 +902,7 @@ fi
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/dnscache/supervise/*
 
 %dir %attr(1755,root,root) %{_sysconfdir}/dnscache/log
-%attr(755,root,root) %{_sysconfdir}/dnscache/log/run
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dnscache/log/run
 %attr(700,root,root) %dir %{_sysconfdir}/dnscache/log/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/dnscache/log/supervise/*
 %attr(751,dnslog,djbdns) %dir /var/log/djbdns/dnscache
@@ -928,7 +928,7 @@ fi
 %attr(700,root,root) %dir %{_sysconfdir}/tinydns/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/tinydns/supervise/*
 
-%attr(755,root,root) %{_sysconfdir}/tinydns/log/run
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/tinydns/log/run
 %dir %attr(1755,root,root) %{_sysconfdir}/tinydns/log
 %attr(700,root,root) %dir %{_sysconfdir}/tinydns/log/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/tinydns/log/supervise/*
@@ -957,7 +957,7 @@ fi
 %attr(700,root,root) %dir %{_sysconfdir}/pickdns/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/pickdns/supervise/*
 
-%attr(755,root,root) %{_sysconfdir}/pickdns/log/run
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pickdns/log/run
 %dir %attr(1755,root,root) %{_sysconfdir}/pickdns/log
 %attr(700,root,root) %dir %{_sysconfdir}/pickdns/log/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/pickdns/log/supervise/*
@@ -981,7 +981,7 @@ fi
 %attr(700,root,root) %dir %{_sysconfdir}/walldns/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/walldns/supervise/*
 
-%attr(755,root,root) %{_sysconfdir}/walldns/log/run
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/walldns/log/run
 %dir %attr(1755,root,root) %{_sysconfdir}/walldns/log
 %attr(700,root,root) %dir %{_sysconfdir}/walldns/log/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/walldns/log/supervise/*
@@ -1003,7 +1003,7 @@ fi
 %attr(700,root,root) %dir %{_sysconfdir}/rbldns/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/rbldns/supervise/*
 
-%attr(755,root,root) %{_sysconfdir}/rbldns/log/run
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rbldns/log/run
 %dir %attr(1755,root,root) %{_sysconfdir}/rbldns/log
 %attr(700,root,root) %dir %{_sysconfdir}/rbldns/log/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/rbldns/log/supervise/*
@@ -1027,7 +1027,7 @@ fi
 %attr(700,root,root) %dir %{_sysconfdir}/axfrdns/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/axfrdns/supervise/*
 
-%attr(755,root,root) %{_sysconfdir}/axfrdns/log/run
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/axfrdns/log/run
 %dir %attr(1755,root,root) %{_sysconfdir}/axfrdns/log
 %attr(700,root,root) %dir %{_sysconfdir}/axfrdns/log/supervise
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/axfrdns/log/supervise/*
