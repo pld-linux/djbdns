@@ -646,28 +646,28 @@ fi
 %useradd -P %{name}-dnscache -u 33 -r -d /etc/dnscache -s /bin/false -c "djbdns User" -g djbdns dnscache
 
 %post dnscache
-if [ ! -s /etc/dnscache/seed ]; then
-	dd if=/dev/urandom of=/etc/dnscache/seed bs=128c count=1
+if [ ! -s %{_sysconfdir}/dnscache/seed ]; then
+	dd if=/dev/urandom of=%{_sysconfdir}/dnscache/seed bs=128c count=1
 fi
-if diff -u /etc/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and pickdns can't work on the same"
-	echo "IP address. You have to edit either /etc/dnscache/env/IP"
-	echo "or /etc/pickdns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/pickdns/env/IP."
 fi
-if diff -u /etc/{dnscache,rbldns}/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{dnscache,rbldns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and rbldns can't work on the same"
-	echo "IP address. You have to edit either /etc/dnscache/env/IP"
-	echo "or /etc/rbldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/rbldns/env/IP."
 fi
-if diff -u /etc/{dnscache,tinydns}/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{dnscache,tinydns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and tinydns can't work on the same"
-	echo "IP address. You have to edit either /etc/dnscache/env/IP"
-	echo "or /etc/tinydns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/tinydns/env/IP."
 fi
-if diff -u /etc/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and walldns can't work on the same"
-	echo "IP address. You have to edit either /etc/dnscache/env/IP"
-	echo "or /etc/walldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/walldns/env/IP."
 fi
 
 if [ -f /service/dnscache/supervise/lock ]; then
@@ -693,25 +693,25 @@ fi
 %useradd -P %{name}-tinydns -u 34 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g djbdns tinydns
 
 %post tinydns
-if diff -u /etc/{dnscache,tinydns}/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{dnscache,tinydns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and tinydns can't work on the same"
-	echo "IP address. You have to edit either /etc/dnscache/env/IP"
-	echo "or /etc/tinydns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/tinydns/env/IP."
 fi
-if diff -u /etc/{pick,tiny}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{pick,tiny}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: pickdns and tinydns can't work on the same"
-	echo "IP address. You have to edit either /etc/pickdns/env/IP"
-	echo "or /etc/tinydns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/pickdns/env/IP"
+	echo "or %{_sysconfdir}/tinydns/env/IP."
 fi
-if diff -u /etc/{rbl,tiny}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{rbl,tiny}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: rbldns and tinydns can't work on the same"
-	echo "IP address. You have to edit either /etc/rbldns/env/IP"
-	echo "or /etc/tinydns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/rbldns/env/IP"
+	echo "or %{_sysconfdir}/tinydns/env/IP."
 fi
-if diff -u /etc/{tiny,wall}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{tiny,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: tinydns and walldns can't work on the same"
-	echo "IP address. You have to edit either /etc/tinydns/env/IP"
-	echo "or /etc/walldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/tinydns/env/IP"
+	echo "or %{_sysconfdir}/walldns/env/IP."
 fi
 
 if [ -f /service/tinydns/supervise/lock ]; then
@@ -737,25 +737,25 @@ fi
 %useradd -P %{name}-pickdns -u 35 -r -d /etc/pickdns -s /bin/false -c "djbdns User" -g djbdns pickdns
 
 %post pickdns
-if diff -u /etc/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and pickdns can't work on the same"
-	echo "IP address. You have to edit either /etc/dnscache/env/IP"
-	echo "or /etc/pickdns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/pickdns/env/IP."
 fi
-if diff -u /etc/{pick,rbl}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{pick,rbl}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: pickdns and rbldns can't work on the same"
-	echo "IP address. You have to edit either /etc/pickdns/env/IP"
-	echo "or /etc/rbldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/pickdns/env/IP"
+	echo "or %{_sysconfdir}/rbldns/env/IP."
 fi
-if diff -u /etc/{pick,tiny}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{pick,tiny}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: pickdns and tinydns can't work on the same"
-	echo "IP address. You have to edit either /etc/pickdns/env/IP"
-	echo "or /etc/tinydns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/pickdns/env/IP"
+	echo "or %{_sysconfdir}/tinydns/env/IP."
 fi
-if diff -u /etc/{pick,wall}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{pick,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: pickdns and walldns can't work on the same"
-	echo "IP address. You have to edit either /etc/pickdns/env/IP"
-	echo "or /etc/walldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/pickdns/env/IP"
+	echo "or %{_sysconfdir}/walldns/env/IP."
 fi
 
 if [ -f /service/pickdns/supervise/lock ]; then
@@ -781,25 +781,25 @@ fi
 %useradd -P %{name}-walldns -u 36 -r -d /etc/walldns -s /bin/false -c "djbdns User" -g djbdns walldns
 
 %post walldns
-if diff -u /etc/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and walldns can't work on the same"
-	echo "IP address. You have to edit either /etc/dnscache/env/IP"
-	echo "or /etc/walldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/walldns/env/IP."
 fi
-if diff -u /etc/{pick,wall}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{pick,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: pickdns and walldns can't work on the same"
-	echo "IP address. You have to edit either /etc/pickdns/env/IP"
-	echo "or /etc/walldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/pickdns/env/IP"
+	echo "or %{_sysconfdir}/walldns/env/IP."
 fi
-if diff -u /etc/{rbl,wall}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{rbl,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: rbldns and walldns can't work on the same"
-	echo "IP address. You have to edit either /etc/rbldns/env/IP"
-	echo "or /etc/walldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/rbldns/env/IP"
+	echo "or %{_sysconfdir}/walldns/env/IP."
 fi
-if diff -u /etc/{tiny,wall}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{tiny,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: tinydns and walldns can't work on the same"
-	echo "IP address. You have to edit either /etc/tinydns/env/IP"
-	echo "or /etc/walldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/tinydns/env/IP"
+	echo "or %{_sysconfdir}/walldns/env/IP."
 fi
 
 if [ -f /service/walldns/supervise/lock ]; then
@@ -825,25 +825,25 @@ fi
 %useradd -P %{name}-rbldns -u 37 -r -d /etc/rbldns -s /bin/false -c "djbdns User" -g djbdns rbldns
 
 %post rbldns
-if diff -u /etc/{dnscache,rbldns}/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{dnscache,rbldns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and rbldns can't work on the same"
-	echo "IP address. You have to edit either /etc/dnscache/env/IP"
-	echo "or /etc/rbldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/rbldns/env/IP."
 fi
-if diff -u /etc/{pick,rbl}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{pick,rbl}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: pickdns and rbldns can't work on the same"
-	echo "IP address. You have to edit either /etc/pickdns/env/IP"
-	echo "or /etc/rbldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/pickdns/env/IP"
+	echo "or %{_sysconfdir}/rbldns/env/IP."
 fi
-if diff -u /etc/{rbl,tiny}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{rbl,tiny}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: rbldns and tinydns can't work on the same"
-	echo "IP address. You have to edit either /etc/rbldns/env/IP"
-	echo "or /etc/tinydns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/rbldns/env/IP"
+	echo "or %{_sysconfdir}/tinydns/env/IP."
 fi
-if diff -u /etc/{rbl,wall}dns/env/IP >/dev/zero 2>&1;then
+if diff -u %{_sysconfdir}/{rbl,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: rbldns and walldns can't work on the same"
-	echo "IP address. You have to edit either /etc/rbldns/env/IP"
-	echo "or /etc/walldns/env/IP."
+	echo "IP address. You have to edit either %{_sysconfdir}/rbldns/env/IP"
+	echo "or %{_sysconfdir}/walldns/env/IP."
 fi
 
 if [ -f /service/rbldns/supervise/lock ]; then
