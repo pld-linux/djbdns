@@ -912,9 +912,9 @@ fi
 %dir %attr(2755,root,root) %{_sysconfdir}/dnscache/env
 %config %{_sysconfdir}/dnscache/env/*
 %attr(755,root,root) %{_sysconfdir}/dnscache/run
-%dir %attr(2755,root,root) %{_sysconfdir}/dnscache/root
-# FIXME no globs for suid/sgid files
-%dir %attr(2755,root,root) %{_sysconfdir}/dnscache/root/*
+%dir %{_sysconfdir}/dnscache/root
+%dir %{_sysconfdir}/dnscache/root/ip
+%dir %{_sysconfdir}/dnscache/root/servers
 %config %attr(600,root,root) %{_sysconfdir}/dnscache/root/ip/*
 %config %{_sysconfdir}/dnscache/root/servers/*
 %ghost %attr(600,root,root) %{_sysconfdir}/dnscache/seed
