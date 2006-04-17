@@ -6,7 +6,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	21
+Release:	22
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -108,7 +108,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(preun):	daemontools
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	daemontools >= 0.70-5
 Provides:	user(dnscache)
 Obsoletes:	dnscache
@@ -145,7 +145,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(preun):	daemontools
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Provides:	user(tinydns)
@@ -172,7 +172,7 @@ Summary(pl):	Narzêdzie do wysy³ania komunikatów DNS NOTIFY
 License:	Free to use
 Group:		Networking/Daemons
 URL:		http://www.sericyb.com.au/tinydns-notify
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	perl-Net-DNS
 Requires:	perl-modules
 Obsoletes:	tinydns-notify
@@ -200,7 +200,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(preun):	daemontools
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Provides:	user(pickdns)
@@ -236,7 +236,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(preun):	daemontools
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	daemontools >= 0.70-5
 Provides:	user(walldns)
 Obsoletes:	walldns
@@ -271,7 +271,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(preun):	daemontools
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Provides:	user(rbldns)
@@ -308,8 +308,8 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(preun):	daemontools
-Requires:	%{name} = %{version}
-Requires:	%{name}-tinydns = %{version}
+Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-tinydns = %{version}-%{release}
 Requires:	daemontools >= 0.70-5
 Requires:	make
 Requires:	ucspi-tcp
