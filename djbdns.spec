@@ -6,7 +6,7 @@ Summary:	DJB DNS
 Summary(pl):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	22
+Release:	22.1
 License:	http://cr.yp.to/distributors.html (free to use)
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
@@ -397,227 +397,195 @@ install djbdns-man/*.1	$RPM_BUILD_ROOT%{_mandir}/man1
 install djbdns-man/*.5  $RPM_BUILD_ROOT%{_mandir}/man5
 install djbdns-man/*.8  $RPM_BUILD_ROOT%{_mandir}/man8
 
-##### DNSCACHE #####
+make_supervise_service() {
+	%{?debug:set -x}
+	local service="$1"
+	local svcdir=$RPM_BUILD_ROOT%{_sysconfdir}/$service
+	local logdir=$RPM_BUILD_ROOT/var/log/djbdns/$service
 
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/dnscache/supervise
-install -d $RPM_BUILD_ROOT/var/log/djbdns/dnscache
-touch $RPM_BUILD_ROOT/var/log/djbdns/dnscache/{lock,state}
-cd $RPM_BUILD_ROOT%{_sysconfdir}/dnscache
-install -d log/supervise
-touch log/supervise/{lock,status}
-mkfifo log/supervise/{control,ok}
-touch supervise/{lock,status}
-mkfifo supervise/{control,ok}
-mkdir env
-echo %{_sysconfdir}/dnscache/root>env/ROOT
-echo 127.0.0.1                   >env/IP
-echo 0.0.0.0                     >env/IPSEND
-echo 1000000                     >env/CACHESIZE
-echo 3000000                     >env/DATALIMIT
-touch env/IGNOREIP
-cat>run<<'___'
+	install -d $svcdir/supervise $svcdir/log/supervise $logdir
+	touch $logdir/{lock,state}
+
+	touch $svcdir/log/supervise/{lock,status}
+	mkfifo $svcdir/log/supervise/{control,ok}
+	touch $svcdir/supervise/{lock,status}
+	mkfifo $svcdir/supervise/{control,ok}
+}
+
+##### DNSCACHE #####
+make_supervise_service dnscache
+s=$RPM_BUILD_ROOT%{_sysconfdir}/dnscache
+mkdir $s/env
+echo %{_sysconfdir}/dnscache/root > $s/env/ROOT
+echo 127.0.0.1                    > $s/env/IP
+echo 0.0.0.0                      > $s/env/IPSEND
+echo 1000000                      > $s/env/CACHESIZE
+echo 3000000                      > $s/env/DATALIMIT
+touch $s/env/IGNOREIP
+cat>$s/run<<'EOF'
 #!/bin/sh
 exec 2>&1
 exec <seed
 exec envdir ./env sh -c '
   exec envuidgid dnscache softlimit -o250 -d "$DATALIMIT" %{_bindir}/dnscache
 '
-___
-cat>log/run<<'___'
+EOF
+cat>$s/log/run<<'EOF'
 #!/bin/sh
 exec setuidgid dnslog multilog t /var/log/djbdns/dnscache
-___
-mkdir root
-mkdir root/ip
-touch root/ip/127.0.0.1
-mkdir root/servers
-ln $RPM_BUILD_ROOT%{_sysconfdir}/dnsroots.global root/servers/@
-dd if=/dev/zero of=seed bs=128c count=1
+EOF
+mkdir $s/root
+mkdir $s/root/ip
+touch $s/root/ip/127.0.0.1
+mkdir $s/root/servers
+ln $RPM_BUILD_ROOT%{_sysconfdir}/dnsroots.global $s/root/servers/@
+dd if=/dev/zero of=$s/seed bs=128c count=1
 
 ##### TINYDNS #####
-
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/tinydns/supervise
-install -d $RPM_BUILD_ROOT/var/log/djbdns/tinydns
-touch $RPM_BUILD_ROOT/var/log/djbdns/tinydns/{lock,state}
-cd $RPM_BUILD_ROOT%{_sysconfdir}/tinydns
-install -d log/supervise
-touch log/supervise/{lock,status}
-mkfifo log/supervise/{control,ok}
-touch supervise/{lock,status}
-mkfifo supervise/{control,ok}
-cat>log/run<<___
+make_supervise_service tinydns
+s=$RPM_BUILD_ROOT%{_sysconfdir}/tinydns
+cat>$s/log/run<<EOF
 #!/bin/sh
 exec setuidgid dnslog multilog t /var/log/djbdns/tinydns
-___
-mkdir env
-echo %{_sysconfdir}/tinydns/root>env/ROOT
-echo 127.0.0.1                  >env/IP
-cat>run<<___
+EOF
+mkdir $s/env
+echo %{_sysconfdir}/tinydns/root > $s/env/ROOT
+echo 127.0.0.1                   > $s/env/IP
+cat>$s/run<<EOF
 #!/bin/sh
 exec 2>&1
 exec envuidgid tinydns envdir ./env softlimit -d300000 %{_bindir}/tinydns
-___
-mkdir root
-touch root/data
-cat>root/add-ns<<'___'
+EOF
+mkdir $s/root
+touch $s/root/data
+cat>$s/root/add-ns<<'EOF'
 #!/bin/sh
 exec %{_bindir}/tinydns-edit data data.new add ns ${1+"$@"}
-___
-cat>root/add-childns<<'___'
+EOF
+cat>$s/root/add-childns<<'EOF'
 #!/bin/sh
 exec %{_bindir}/tinydns-edit data data.new add childns ${1+"$@"}
-___
-cat>root/add-host<<'___'
+EOF
+cat>$s/root/add-host<<'EOF'
 #!/bin/sh
 exec %{_bindir}/tinydns-edit data data.new add host ${1+"$@"}
-___
-cat>root/add-host6<<'___'
+EOF
+cat>$s/root/add-host6<<'EOF'
 #!/bin/sh
 exec %{_bindir}/tinydns-edit data data.new add host6 ${1+"$@"}
-___
-cat>root/add-alias<<'___'
+EOF
+cat>$s/root/add-alias<<'EOF'
 #!/bin/sh
 exec %{_bindir}/tinydns-edit data data.new add alias ${1+"$@"}
-___
-cat>root/add-alias6<<'___'
+EOF
+cat>$s/root/add-alias6<<'EOF'
 #!/bin/sh
 exec %{_bindir}/tinydns-edit data data.new add alias6 ${1+"$@"}
-___
-cat>root/add-mx<<'___'
+EOF
+cat>$s/root/add-mx<<'EOF'
 #!/bin/sh
 exec %{_bindir}/tinydns-edit data data.new add mx ${1+"$@"}
-___
-cat>root/Makefile<<'___'
+EOF
+cat>$s/root/Makefile<<'EOF'
 data.cdb: data
 	%{_bindir}/tinydns-data
-___
+EOF
 
 ##### PICKDNS #####
-
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/pickdns/supervise
-install -d $RPM_BUILD_ROOT/var/log/djbdns/pickdns
-touch $RPM_BUILD_ROOT/var/log/djbdns/pickdns/{lock,state}
-cd $RPM_BUILD_ROOT%{_sysconfdir}/pickdns
-install -d log/supervise
-touch log/supervise/{lock,status}
-mkfifo log/supervise/{control,ok}
-touch supervise/{lock,status}
-mkfifo supervise/{control,ok}
-cat>log/run<<___
+make_supervise_service pickdns
+s=$RPM_BUILD_ROOT%{_sysconfdir}/pickdns
+cat>$s/log/run<<EOF
 #!/bin/sh
 exec setuidgid dnslog multilog t /var/log/djbdns/pickdns
-___
-mkdir env
-echo %{_sysconfdir}/pickdns/root>env/ROOT
-echo 127.0.0.1                  >env/IP
-cat>run<<___
+EOF
+mkdir $s/env
+echo %{_sysconfdir}/pickdns/root > $s/env/ROOT
+echo 127.0.0.1                   > $s/env/IP
+cat>$s/run<<EOF
 #!/bin/sh
 exec 2>&1
 exec envuidgid pickdns envdir ./env softlimit -d250000 %{_bindir}/pickdns
-___
-mkdir root
-touch root/data
-cat>root/Makefile<<___
+EOF
+mkdir $s/root
+touch $s/root/data
+cat>$s/root/Makefile<<EOF
 data.cdb: data
 	%{_bindir}/pickdns-data
-___
+EOF
 
 ##### WALLDNS #####
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/walldns/supervise
-install -d $RPM_BUILD_ROOT/var/log/djbdns/walldns
-touch $RPM_BUILD_ROOT/var/log/djbdns/walldns/{lock,state}
-cd $RPM_BUILD_ROOT%{_sysconfdir}/walldns
-install -d log/supervise
-touch log/supervise/{lock,status}
-mkfifo log/supervise/{control,ok}
-touch supervise/{lock,status}
-mkfifo supervise/{control,ok}
-cat>log/run<<___
+make_supervise_service walldns
+s=$RPM_BUILD_ROOT%{_sysconfdir}/walldns
+cat>$s/log/run<<EOF
 #!/bin/sh
 exec setuidgid dnslog multilog t ./main
-___
-mkdir env
-echo %{_sysconfdir}/walldns/root>env/ROOT
-echo 127.0.0.1                  >env/IP
-cat>run<<___
+EOF
+mkdir $s/env
+echo %{_sysconfdir}/walldns/root > $s/env/ROOT
+echo 127.0.0.1                   > $s/env/IP
+cat>$s/run<<EOF
 #!/bin/sh
 exec 2>&1
 exec envuidgid walldns envdir ./env softlimit -d250000 %{_bindir}/walldns
-___
-mkdir root
+EOF
+mkdir $s/root
 
 ##### RBLDNS #####
-
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/rbldns/supervise
-install -d $RPM_BUILD_ROOT/var/log/djbdns/rbldns
-touch $RPM_BUILD_ROOT/var/log/djbdns/rbldns/{lock,state}
-cd $RPM_BUILD_ROOT%{_sysconfdir}/rbldns
-install -d log/supervise
-touch log/supervise/{lock,status}
-mkfifo log/supervise/{control,ok}
-touch supervise/{lock,status}
-mkfifo supervise/{control,ok}
-cat>log/run<<___
+make_supervise_service rbldns
+s=$RPM_BUILD_ROOT%{_sysconfdir}/rbldns
+cat>$s/log/run<<EOF
 #!/bin/sh
 exec setuidgid dnslog multilog t /var/log/djbdns/rbldns
-___
-mkdir env
-echo %{_sysconfdir}/rbldns/root>env/ROOT
-echo 127.0.0.1                 >env/IP
-echo in-addr.arpa              >env/BASE
-cat>run<<___
+EOF
+mkdir $s/env
+echo %{_sysconfdir}/rbldns/root > $s/env/ROOT
+echo 127.0.0.1                  > $s/env/IP
+echo in-addr.arpa               > $s/env/BASE
+cat>$s/run<<EOF
 #!/bin/sh
 exec 2>&1
 exec envuidgid rbldns envdir ./env softlimit -d250000 %{_bindir}/rbldns
-___
-mkdir root
-touch root/data
-cat>root/Makefile<<___
+EOF
+mkdir $s/root
+touch $s/root/data
+cat>$s/root/Makefile<<EOF
 data.cdb: data
 	%{_bindir}/rbldns-data
-___
-cat>data<<___
+EOF
+cat>$s/data<<EOF
 # example
 # !10.11.12.13:See http://bad.example.com
 # :127.0.0.2:blacklisted"
 # 1.2.3.0/24
-___
+EOF
 
 
 
 ##### AXFRDNS #####
-
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/axfrdns/supervise
-install -d $RPM_BUILD_ROOT/var/log/djbdns/axfrdns
-touch $RPM_BUILD_ROOT/var/log/djbdns/axfrdns/{lock,state}
-cd $RPM_BUILD_ROOT%{_sysconfdir}/axfrdns
-install -d log/supervise
-touch log/supervise/{lock,status}
-mkfifo log/supervise/{control,ok}
-touch supervise/{lock,status}
-mkfifo supervise/{control,ok}
-cat>log/run<<___
+make_supervise_service axfrdns
+s=$RPM_BUILD_ROOT%{_sysconfdir}/axfrdns
+cat>$s/log/run<<EOF
 #!/bin/sh
 exec setuidgid dnslog multilog t /var/log/djbdns/axfrdns
-___
-mkdir env
-echo %{_sysconfdir}/tinydns/root>env/ROOT
-echo 127.0.0.1                  >env/IP
-cat>run<<'___'
+EOF
+mkdir $s/env
+echo %{_sysconfdir}/tinydns/root > $s/env/ROOT
+echo 127.0.0.1                   > $s/env/IP
+cat>$s/run<<'EOF'
 #!/bin/sh
 exec 2>&1
 exec envdir ./env sh -c '
   exec envuidgid axfrdns softlimit -d300000 tcpserver -vDRHl0 -x tcp.cdb -- "$IP" 53 %{_bindir}/axfrdns
 '
-___
-cat>Makefile<<___
+EOF
+cat>$s/Makefile<<'EOF'
 tcp.cdb: tcp
 	tcprules tcp.cdb tcp.tmp < tcp
-___
-cat>tcp<<___
+EOF
+cat>$s/tcp<<'EOF'
 # sample line:  1.2.3.4:allow,AXFR="heaven.af.mil/3.2.1.in-addr.arpa"
 :deny
-___
+EOF
 
 ##### daemontools symlinks #####
 install -d $RPM_BUILD_ROOT/service
