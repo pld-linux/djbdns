@@ -3,7 +3,7 @@
 #   /etc/rbldns/data
 #   /usr/bin/random-ip
 Summary:	DJB DNS
-Summary(pl):	DJB DNS
+Summary(pl.UTF-8):   DJB DNS
 Name:		djbdns
 Version:	1.05
 Release:	22.1
@@ -63,42 +63,42 @@ packages:
  - djbdns-rbldns - an IP-address-listing DNS server
  - djbdns-axfrdns - a DNS zone transfer server
 
-%description -l de
+%description -l de.UTF-8
 Dies ist ein Satz von auf Sicherheit zielenden DNS-Servers. Man kriegt
 ein Preis, wenn man ein Sicherheitsloch findet.
 
-Dieses Paket enthält ein paar DNS-Werkzeugen und etwas Dokumentation.
+Dieses Paket enthÃ¤lt ein paar DNS-Werkzeugen und etwas Dokumentation.
 Wenn du einen DNS-Server braucht, installe ein von den folgenden
 Paketen:
 
  - djbdns-dnscache - ein lokaler DNS-Cache
  - djbdns-tinydns - ein DNS-Server
  - djbdns-pickdns - ein Belastung ausgleichender DNS-Server
- - djbdns-walldns - eine Wand Rückgekehrten DNSs
+ - djbdns-walldns - eine Wand RÃ¼ckgekehrten DNSs
  - djbdns-rbldns - ein IP-Adressen-Listen-DNS-Server
  - djbdns-axfrdns - ein DNS-Zonen-Transfer-Server
 
-%description -l pl
-Jest to alternatywny zestaw serwerów DNS'u, którego g³ównym celem jest
-bezpieczeñstwo. Za znalezienie dziury w tym systemie zosta³a
+%description -l pl.UTF-8
+Jest to alternatywny zestaw serwerÃ³w DNS'u, ktÃ³rego gÅ‚Ã³wnym celem jest
+bezpieczeÅ„stwo. Za znalezienie dziury w tym systemie zostaÅ‚a
 wyznaczona nawet nagroda.
 
-Ten pakiet zawiera kilka podstawowych narzêdzi DNS oraz trochê
-dokumentacji. Je¶li potrzebujesz serwera DNS zainstaluj jeden z
-nastêpuj±cych pakietów:
+Ten pakiet zawiera kilka podstawowych narzÄ™dzi DNS oraz trochÄ™
+dokumentacji. JeÅ›li potrzebujesz serwera DNS zainstaluj jeden z
+nastÄ™pujÄ…cych pakietÃ³w:
 
  - djbdns-dnscache - lokalny cache DNS
  - djbdns-tinydns - serwer DNS
- - djbdns-tinydns-notify - narzêdzie do wysy³ania komunikatów NOTIFY
- - djbdns-pickdns - serwer DNS do równowa¿enia obci±¿eñ
- - djbdns-walldns - ¶ciana dla odwrotnych zapytañ DNS
- - djbdns-rbldns - serwer DNS list adresów IP
- - djbdns-axfrdns - serwer transferów stref DNS
+ - djbdns-tinydns-notify - narzÄ™dzie do wysyÅ‚ania komunikatÃ³w NOTIFY
+ - djbdns-pickdns - serwer DNS do rÃ³wnowaÅ¼enia obciÄ…Å¼eÅ„
+ - djbdns-walldns - Å›ciana dla odwrotnych zapytaÅ„ DNS
+ - djbdns-rbldns - serwer DNS list adresÃ³w IP
+ - djbdns-axfrdns - serwer transferÃ³w stref DNS
 
 %package dnscache
 Summary:	DJB's local DNS cache
-Summary(de):	DJBs lokaler DNS-Cache
-Summary(pl):	Lokalny cache DNS od DJB
+Summary(de.UTF-8):   DJBs lokaler DNS-Cache
+Summary(pl.UTF-8):   Lokalny cache DNS od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(post):	fileutils
@@ -119,24 +119,24 @@ recursive DNS queries from local clients such as web browsers and mail
 transfer agents. It collects responses from remote DNS servers. It
 caches the responses to save time later.
 
-%description dnscache -l de
-dnscache ist ein lokaler DNS-Cache aus dem djbdns-Paket. Es empfängt
+%description dnscache -l de.UTF-8
+dnscache ist ein lokaler DNS-Cache aus dem djbdns-Paket. Es empfÃ¤ngt
 rekursive DNS-Fragen von den lokalen Klienten, zum Beispiel
 Web-Browsers und Mail-Transfer-Agenten. Es sammelt die Antworten von
-den Fern-DNS-Servers. Es merkt sich die Antworten, um die Zeit später
+den Fern-DNS-Servers. Es merkt sich die Antworten, um die Zeit spÃ¤ter
 zu sparen.
 
-%description dnscache -l pl
+%description dnscache -l pl.UTF-8
 dnscache jest lokalnym cachem DNS z pakietu djbdns. Przyjmuje on
-rekursywne zapytania DNS od lokalnych klientów takich, jak
-przegl±darki WWW i agenci transferu poczty (MTA). Zbiera on odpowiedzi
-od zdalnych serwerów DNS. Zapamiêtuje on odpowiedzi, ¿eby pó¼niej
-oszczêdziæ czas.
+rekursywne zapytania DNS od lokalnych klientÃ³w takich, jak
+przeglÄ…darki WWW i agenci transferu poczty (MTA). Zbiera on odpowiedzi
+od zdalnych serwerÃ³w DNS. ZapamiÄ™tuje on odpowiedzi, Å¼eby pÃ³Åºniej
+oszczÄ™dziÄ‡ czas.
 
 %package tinydns
 Summary:	DJB's DNS server
-Summary(de):	DJBs DNS-Server
-Summary(pl):	Serwer DNS od DJB
+Summary(de.UTF-8):   DJBs DNS-Server
+Summary(pl.UTF-8):   Serwer DNS od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(postun):	/usr/sbin/groupdel
@@ -156,19 +156,19 @@ tinydns is a DNS server from the djbdns package. It accepts iterative
 DNS queries from hosts around the Internet and responds with
 locally-configured information.
 
-%description tinydns -l de
-tinydns ist ein DNS-Server aus dem djbdns-Paket. Es empfängt iterative
+%description tinydns -l de.UTF-8
+tinydns ist ein DNS-Server aus dem djbdns-Paket. Es empfÃ¤ngt iterative
 DNS-Fragen von dem Hosts aus allem Internet und antwortet mit den
 lokal-konfigurierten Informationen.
 
-%description tinydns -l pl
+%description tinydns -l pl.UTF-8
 tinydns jest serwerem DNS z pakietu djbdns. Przyjmuje on iteracyjne
-zapytania DNS od komputerów z ca³ego Internetu i odpowiada przy u¿yciu
+zapytania DNS od komputerÃ³w z caÅ‚ego Internetu i odpowiada przy uÅ¼yciu
 lokalnie skonfigurowanych informacji.
 
 %package tinydns-notify
 Summary:	DNS NOTIFY sending tool
-Summary(pl):	Narzêdzie do wysy³ania komunikatów DNS NOTIFY
+Summary(pl.UTF-8):   NarzÄ™dzie do wysyÅ‚ania komunikatÃ³w DNS NOTIFY
 License:	Free to use
 Group:		Networking/Daemons
 URL:		http://www.sericyb.com.au/tinydns-notify
@@ -182,16 +182,16 @@ tinydns-notify is a tool written in Perl, which extracts zones and
 their nameservers from tinydns-data files and sends DNS NOTIFY
 requests to nameservers listed in notify-list file.
 
-%description tinydns-notify -l pl
-tinydns-notify jest napisanym w Perlu narzêdziem, które czyta pliki
-stref i odpowiadaj±ce im serwery nazw z plików tinydns-data, a
-nastêpnie wysy³a ¿±dania NOTIFY do serwerów wyspecyfikowanych w pliku
+%description tinydns-notify -l pl.UTF-8
+tinydns-notify jest napisanym w Perlu narzÄ™dziem, ktÃ³re czyta pliki
+stref i odpowiadajÄ…ce im serwery nazw z plikÃ³w tinydns-data, a
+nastÄ™pnie wysyÅ‚a Å¼Ä…dania NOTIFY do serwerÃ³w wyspecyfikowanych w pliku
 notify-list.
 
 %package pickdns
 Summary:	DJB's load-balancing DNS server
-Summary(de):	DJBs Belastung ausgleichender DNS-Server
-Summary(pl):	Serwer DNS równowa¿±cy obci±¿enie od DJB
+Summary(de.UTF-8):   DJBs Belastung ausgleichender DNS-Server
+Summary(pl.UTF-8):   Serwer DNS rÃ³wnowaÅ¼Ä…cy obciÄ…Å¼enie od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(postun):	/usr/sbin/groupdel
@@ -212,22 +212,22 @@ accepts iterative DNS queries from hosts around the Internet and
 responds with a dynamic selection of locally configured IP addresses
 with 5-second TTLs.
 
-%description pickdns -l de
+%description pickdns -l de.UTF-8
 pickdns ist ein Belastung ausgleichender DNS-Server aus dem
-djbdns-Paket. Es empfängt iterative DNS-Fragen von den Hosts aus allem
+djbdns-Paket. Es empfÃ¤ngt iterative DNS-Fragen von den Hosts aus allem
 Internet und antwortet mit eine dynamische Auswahl von den
 lokal-konfigurierten IP-Adressen mit 5-Sekunden-TTLs.
 
-%description pickdns -l pl
-pickdns jest równowa¿±cym obci±¿enie serwerem DNS z pakietu djbdns.
-Odbiera on iteracyjne zapytania DNS od komputerów z ca³ego internetu i
-odpowiada dynamicznym wyborem lokalnie skonfigurowanych adresów IP z
+%description pickdns -l pl.UTF-8
+pickdns jest rÃ³wnowaÅ¼Ä…cym obciÄ…Å¼enie serwerem DNS z pakietu djbdns.
+Odbiera on iteracyjne zapytania DNS od komputerÃ³w z caÅ‚ego internetu i
+odpowiada dynamicznym wyborem lokalnie skonfigurowanych adresÃ³w IP z
 5-sekundowymi TTLami.
 
 %package walldns
 Summary:	DJB's reverse DNS wall
-Summary(de):	DJBs Wand rückgekehrten DNSs
-Summary(pl):	¦ciana dla odwrotnych zapytañ DNS od DJB
+Summary(de.UTF-8):   DJBs Wand rÃ¼ckgekehrten DNSs
+Summary(pl.UTF-8):   Åšciana dla odwrotnych zapytaÅ„ DNS od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(postun):	/usr/sbin/groupdel
@@ -247,22 +247,22 @@ iterative DNS queries for in-addr.arpa domains from hosts around the
 Internet and supplies generic responses that avoid revealing local
 host information.
 
-%description walldns -l de
-walldns ist ein Wand rückgekehrten DNSs aus dem djbdns-Paket. Es
-empfängt iterative DNS-Fragen für den in-addr.arpa-Domänen von den
+%description walldns -l de.UTF-8
+walldns ist ein Wand rÃ¼ckgekehrten DNSs aus dem djbdns-Paket. Es
+empfÃ¤ngt iterative DNS-Fragen fÃ¼r den in-addr.arpa-DomÃ¤nen von den
 Hosts aus allem Internet und liefert Antworte, die vermeiden
-Informationen über die lokalen Hosts zu aufzudecken.
+Informationen Ã¼ber die lokalen Hosts zu aufzudecken.
 
-%description walldns -l pl
-walldns jest ¶cian± dla odwrotnych zapytañ DNS z pakietu djbdns.
+%description walldns -l pl.UTF-8
+walldns jest Å›cianÄ… dla odwrotnych zapytaÅ„ DNS z pakietu djbdns.
 Przyjmuje ona iteracyjne zapytania DNS dla domen in-addr.arpa od
-komputerów z ca³ego Internetu i dostarcza odpowiedzi, które unikaj±
+komputerÃ³w z caÅ‚ego Internetu i dostarcza odpowiedzi, ktÃ³re unikajÄ…
 ujawniania informacji o lokalnych komputerach.
 
 %package rbldns
 Summary:	DJB's IP-address-listing DNS server
-Summary(de):	DJBs IP-Adressen-Listen-DNS-Server
-Summary(pl):	Serwer DNS list adresów IP od DJB
+Summary(de.UTF-8):   DJBs IP-Adressen-Listen-DNS-Server
+Summary(pl.UTF-8):   Serwer DNS list adresÃ³w IP od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(postun):	/usr/sbin/groupdel
@@ -284,23 +284,23 @@ accepts iterative DNS queries from hosts around the Internet asking
 about various IP addresses. It provides responses showing whether the
 addresses are on a locally configured list, such as RBL or DUL.
 
-%description rbldns -l de
+%description rbldns -l de.UTF-8
 rbldns ist ein IP-Adressen-Listen-DNS-Server aus dem djbdns-Paket. Es
-empfängt iterative DNS-Fragen von den Hosts aus allem Internet
+empfÃ¤ngt iterative DNS-Fragen von den Hosts aus allem Internet
 fragende nach verschiedene IP-Adresse. Es liefert Antworte, die zeugen
 ob die Adresse sich auf einer lokal-konfigurierten Liste befinden, zum
 Beispiel RBL oder DUL.
 
-%description rbldns -l pl
-rbldns jest serwerem DNS list adresów z pakietu djbdns. Przyjmuje on
-iteracyjne zapytania DNS od komputerów z ca³ego Internetu pytaj±ce o
-ró¿ne adresy IP. Dostarcza on odpowiedzi pokazuj±cych, czy adresy te
-s± na lokalnie skonfigurowanej li¶cie takiej, jak RBL lub DUL.
+%description rbldns -l pl.UTF-8
+rbldns jest serwerem DNS list adresÃ³w z pakietu djbdns. Przyjmuje on
+iteracyjne zapytania DNS od komputerÃ³w z caÅ‚ego Internetu pytajÄ…ce o
+rÃ³Å¼ne adresy IP. Dostarcza on odpowiedzi pokazujÄ…cych, czy adresy te
+sÄ… na lokalnie skonfigurowanej liÅ›cie takiej, jak RBL lub DUL.
 
 %package axfrdns
 Summary:	DJB's DNS zone-transfer server
-Summary(de):	DJBs DNS-Zonen-Transfer-Server
-Summary(pl):	Serwer transferów stref DNS od DJB
+Summary(de.UTF-8):   DJBs DNS-Zonen-Transfer-Server
+Summary(pl.UTF-8):   Serwer transferÃ³w stref DNS od DJB
 Group:		Networking/Daemons
 Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
@@ -321,16 +321,16 @@ axfrdns is a DNS zone transfer server from the djbdns package. It
 reads a zone-transfer request in DNS-over-TCP format from its standard
 input and responds with locally configured information.
 
-%description axfrdns -l de
+%description axfrdns -l de.UTF-8
 axfrdns ist ein DNS-Zonen-Transfer-Server aus dem djbdns-Paket. Es
 liest ein Zonen-Transfer-Ersuchen im DNS-over-TCP-Format von seinem
 standarden Eingabe und antwortet mit den lokal-konfigurierten
 Informationen.
 
-%description axfrdns -l pl
-axfrdns jest serwerem transferów stref DNS z pakietu djbdns. Wczytuje
-on ze standardowego wej¶cia pro¶bê o transfer strefy w formacie
-DNS-over-TCP i odpowiada przy u¿yciu lokalnie skonfigurowanych
+%description axfrdns -l pl.UTF-8
+axfrdns jest serwerem transferÃ³w stref DNS z pakietu djbdns. Wczytuje
+on ze standardowego wejÅ›cia proÅ›bÄ™ o transfer strefy w formacie
+DNS-over-TCP i odpowiada przy uÅ¼yciu lokalnie skonfigurowanych
 informacji.
 
 %prep
