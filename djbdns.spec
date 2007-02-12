@@ -3,7 +3,7 @@
 #   /etc/rbldns/data
 #   /usr/bin/random-ip
 Summary:	DJB DNS
-Summary(pl.UTF-8):   DJB DNS
+Summary(pl.UTF-8):	DJB DNS
 Name:		djbdns
 Version:	1.05
 Release:	22.1
@@ -97,8 +97,8 @@ następujących pakietów:
 
 %package dnscache
 Summary:	DJB's local DNS cache
-Summary(de.UTF-8):   DJBs lokaler DNS-Cache
-Summary(pl.UTF-8):   Lokalny cache DNS od DJB
+Summary(de.UTF-8):	DJBs lokaler DNS-Cache
+Summary(pl.UTF-8):	Lokalny cache DNS od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(post):	fileutils
@@ -135,8 +135,8 @@ oszczędzić czas.
 
 %package tinydns
 Summary:	DJB's DNS server
-Summary(de.UTF-8):   DJBs DNS-Server
-Summary(pl.UTF-8):   Serwer DNS od DJB
+Summary(de.UTF-8):	DJBs DNS-Server
+Summary(pl.UTF-8):	Serwer DNS od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(postun):	/usr/sbin/groupdel
@@ -168,7 +168,7 @@ lokalnie skonfigurowanych informacji.
 
 %package tinydns-notify
 Summary:	DNS NOTIFY sending tool
-Summary(pl.UTF-8):   Narzędzie do wysyłania komunikatów DNS NOTIFY
+Summary(pl.UTF-8):	Narzędzie do wysyłania komunikatów DNS NOTIFY
 License:	Free to use
 Group:		Networking/Daemons
 URL:		http://www.sericyb.com.au/tinydns-notify
@@ -190,8 +190,8 @@ notify-list.
 
 %package pickdns
 Summary:	DJB's load-balancing DNS server
-Summary(de.UTF-8):   DJBs Belastung ausgleichender DNS-Server
-Summary(pl.UTF-8):   Serwer DNS równoważący obciążenie od DJB
+Summary(de.UTF-8):	DJBs Belastung ausgleichender DNS-Server
+Summary(pl.UTF-8):	Serwer DNS równoważący obciążenie od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(postun):	/usr/sbin/groupdel
@@ -226,8 +226,8 @@ odpowiada dynamicznym wyborem lokalnie skonfigurowanych adresów IP z
 
 %package walldns
 Summary:	DJB's reverse DNS wall
-Summary(de.UTF-8):   DJBs Wand rückgekehrten DNSs
-Summary(pl.UTF-8):   Ściana dla odwrotnych zapytań DNS od DJB
+Summary(de.UTF-8):	DJBs Wand rückgekehrten DNSs
+Summary(pl.UTF-8):	Ściana dla odwrotnych zapytań DNS od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(postun):	/usr/sbin/groupdel
@@ -261,8 +261,8 @@ ujawniania informacji o lokalnych komputerach.
 
 %package rbldns
 Summary:	DJB's IP-address-listing DNS server
-Summary(de.UTF-8):   DJBs IP-Adressen-Listen-DNS-Server
-Summary(pl.UTF-8):   Serwer DNS list adresów IP od DJB
+Summary(de.UTF-8):	DJBs IP-Adressen-Listen-DNS-Server
+Summary(pl.UTF-8):	Serwer DNS list adresów IP od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(postun):	/usr/sbin/groupdel
@@ -299,8 +299,8 @@ są na lokalnie skonfigurowanej liście takiej, jak RBL lub DUL.
 
 %package axfrdns
 Summary:	DJB's DNS zone-transfer server
-Summary(de.UTF-8):   DJBs DNS-Zonen-Transfer-Server
-Summary(pl.UTF-8):   Serwer transferów stref DNS od DJB
+Summary(de.UTF-8):	DJBs DNS-Zonen-Transfer-Server
+Summary(pl.UTF-8):	Serwer transferów stref DNS od DJB
 Group:		Networking/Daemons
 Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
