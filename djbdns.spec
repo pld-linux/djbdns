@@ -7,7 +7,8 @@ Summary(pl.UTF-8):	DJB DNS
 Name:		djbdns
 Version:	1.05
 Release:	22.1
-License:	http://cr.yp.to/distributors.html (free to use)
+# http://cr.yp.to/distributors.html
+License:	Public Domain
 Group:		Networking/Daemons
 Source0:	http://cr.yp.to/djbdns/%{name}-%{version}.tar.gz
 # Source0-md5:	3147c5cd56832aa3b41955c7a51cbeb2
