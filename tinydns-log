@@ -8,6 +8,10 @@
 # to add tinydns response flag "C" and more DNS RR type codes
 # modified 26-AUG-2002 by Andrew Pam <xanni@sericyb.com.au>
 # to support axfrdns logs as well as tinydns logs
+# modified 11-OCT-2006 by Andrew Pam <xanni@sericyb.com.au>
+# to enable autoflush and support new "X" NXDOMAIN responses
+
+$| = 1; # enable autoflush
 
 # convert addresses in hex to dotted decimal notation.
 s/\b([a-f0-9]{8})\b/join(".", unpack("C*", pack("H8", $1)))/eg;
@@ -17,7 +21,7 @@ s/\b([a-f0-9]{8})\b/join(".", unpack("C*", pack("H8", $1)))/eg;
 # query tai64n host:port:qid flag qtype thing
 # keep tai64n header as is - use tai64nlocal to convert it to TAI
 
-s/^(@[a-f0-9]+) \b([\d.]+):(\w+):(\w+) ([\+\-CI\/]?)\s?\b([a-f0-9]+) \b([-.\w]+)/$1." ".printQueryLine($2,$3,$4,$5,$6,$7)/e;
+s/^(@[a-f0-9]+) \b([\d.]+):(\w+):(\w+) ([\+\-CIX\/]?)\s?\b([a-f0-9]+) \b([-.\w]+)/$1." ".printQueryLine($2,$3,$4,$5,$6,$7)/e;
 
 ### subs
 
