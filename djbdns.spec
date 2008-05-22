@@ -141,11 +141,6 @@ Summary:	DJB's external DNS cache
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(post):	fileutils
-Requires(postun):	/usr/sbin/groupdel
-Requires(postun):	/usr/sbin/userdel
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/groupadd
-Requires(pre):	/usr/sbin/useradd
 Requires(preun):	daemontools
 Requires:	%{name}-dnscache = %{version}-%{release}
 
