@@ -6,7 +6,7 @@ Summary:	DJB DNS
 Summary(pl.UTF-8):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	23
+Release:	23.2
 # http://cr.yp.to/distributors.html
 License:	Public Domain
 Group:		Networking/Daemons
@@ -33,6 +33,7 @@ Patch8:		%{name}-tinydns-include.patch
 Patch9:		%{name}-tinydns-log-ipv6.patch
 # http://romana.now.ie/software/djbdns-cachestats.patch
 Patch10:	%{name}-cachestats.patch
+Patch11:	%{name}-ipv6-incfix.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
@@ -57,6 +58,7 @@ documentation. If you need a DNS server install one of the following
 packages:
 
  - djbdns-dnscache - a local DNS cache
+ - djbdns-dnscachex - a external DNS cache
  - djbdns-tinydns - a DNS server
  - djbdns-tinydns-notify - a tool to send NOTIFY requests
  - djbdns-pickdns - a DNS load-balancing server
@@ -133,6 +135,25 @@ rekursywne zapytania DNS od lokalnych klientów takich, jak
 przeglądarki WWW i agenci transferu poczty (MTA). Zbiera on odpowiedzi
 od zdalnych serwerów DNS. Zapamiętuje on odpowiedzi, żeby później
 oszczędzić czas.
+
+%package dnscachex
+Summary:	DJB's external DNS cache
+Group:		Networking/Daemons
+Requires(post):	diffutils
+Requires(post):	fileutils
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
+Requires(preun):	daemontools
+Requires:	%{name}-dnscache = %{version}-%{release}
+
+%description dnscachex
+dnscachex is a external DNS cache from the djbdns package. It accepts
+recursive DNS queries from external clients such as web browsers and
+mail transfer agents. It collects responses from remote DNS servers.
+It caches the responses to save time later.
 
 %package tinydns
 Summary:	DJB's DNS server
@@ -348,6 +369,7 @@ install %{SOURCE4} .
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 cd doc
 ln -s merge/djbdns/* .
 
@@ -434,6 +456,35 @@ EOF
 cat>$s/log/run<<'EOF'
 #!/bin/sh
 exec setuidgid dnslog multilog t /var/log/djbdns/dnscache
+EOF
+mkdir $s/root
+mkdir $s/root/ip
+touch $s/root/ip/127.0.0.1
+mkdir $s/root/servers
+ln $RPM_BUILD_ROOT%{_sysconfdir}/dnsroots.global $s/root/servers/@
+dd if=/dev/zero of=$s/seed bs=128c count=1
+
+##### DNSCACHEX #####
+make_supervise_service dnscachex
+s=$RPM_BUILD_ROOT%{_sysconfdir}/dnscachex
+mkdir $s/env
+echo %{_sysconfdir}/dnscachex/root > $s/env/ROOT
+echo 127.0.0.1                    > $s/env/IP
+echo 0.0.0.0                      > $s/env/IPSEND
+echo 1000000                      > $s/env/CACHESIZE
+echo 3000000                      > $s/env/DATALIMIT
+touch $s/env/IGNOREIP
+cat>$s/run<<'EOF'
+#!/bin/sh
+exec 2>&1
+exec <seed
+exec envdir ./env sh -c '
+  exec envuidgid dnscache softlimit -o250 -d "$DATALIMIT" %{_bindir}/dnscache
+'
+EOF
+cat>$s/log/run<<'EOF'
+#!/bin/sh
+exec setuidgid dnslog multilog t /var/log/djbdns/dnscachex
 EOF
 mkdir $s/root
 mkdir $s/root/ip
@@ -592,6 +643,7 @@ EOF
 install -d $RPM_BUILD_ROOT/service
 cd $RPM_BUILD_ROOT/service
 ln -s ..%{_sysconfdir}/dnscache
+ln -s ..%{_sysconfdir}/dnscachex
 ln -s ..%{_sysconfdir}/tinydns
 ln -s ..%{_sysconfdir}/pickdns
 ln -s ..%{_sysconfdir}/walldns
@@ -622,6 +674,11 @@ if diff -u %{_sysconfdir}/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and pickdns can't work on the same"
 	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
 	echo "or %{_sysconfdir}/pickdns/env/IP."
+fi
+if diff -u %{_sysconfdir}/{dnscache,dnscachex}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscache and dnscachex can't work on the same"
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/dnscachex/env/IP."
 fi
 if diff -u %{_sysconfdir}/{dnscache,rbldns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and rbldns can't work on the same"
@@ -658,6 +715,50 @@ if [ "$1" = "0" ]; then
 	%userremove dnscache
 fi
 
+%post dnscachex
+if [ ! -s %{_sysconfdir}/dnscachex/seed ]; then
+	dd if=/dev/urandom of=%{_sysconfdir}/dnscachex/seed bs=128c count=1
+fi
+if diff -u %{_sysconfdir}/{dnscachex,dnscache}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscachex and dnscache can't work on the same"
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscachex/env/IP"
+	echo "or %{_sysconfdir}/dnscache/env/IP."
+fi
+if diff -u %{_sysconfdir}/{dnscachex,pickdns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscachex and pickdns can't work on the same"
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscachex/env/IP"
+	echo "or %{_sysconfdir}/pickdns/env/IP."
+fi
+if diff -u %{_sysconfdir}/{dnscachex,rbldns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscachex and rbldns can't work on the same"
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscachex/env/IP"
+	echo "or %{_sysconfdir}/rbldns/env/IP."
+fi
+if diff -u %{_sysconfdir}/{dnscachex,tinydns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscachex and tinydns can't work on the same"
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscachex/env/IP"
+	echo "or %{_sysconfdir}/tinydns/env/IP."
+fi
+if diff -u %{_sysconfdir}/{dnscachex,walldns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscachex and walldns can't work on the same"
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscachex/env/IP"
+	echo "or %{_sysconfdir}/walldns/env/IP."
+fi
+
+if [ -f /service/dnscachex/supervise/lock ]; then
+	svc -t /service/dnscachex{,/log}
+fi
+
+%preun dnscachex
+if [ "$1" = "0" ]; then
+	# http://cr.yp.to/daemontools/faq/create.html#remove
+	if [ -f /service/dnscachex/supervise/lock ]; then
+		cd /service/dnscachex
+		rm /service/dnscachex
+		svc -dx . log
+	fi
+fi
+
 %pre tinydns
 %useradd -P %{name}-tinydns -u 34 -r -d /etc/tinydns -s /bin/false -c "djbdns User" -g djbdns tinydns
 
@@ -665,6 +766,11 @@ fi
 if diff -u %{_sysconfdir}/{dnscache,tinydns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and tinydns can't work on the same"
 	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/tinydns/env/IP."
+fi
+if diff -u %{_sysconfdir}/{dnscachex,tinydns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscachex and tinydns can't work on the same"
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscachex/env/IP"
 	echo "or %{_sysconfdir}/tinydns/env/IP."
 fi
 if diff -u %{_sysconfdir}/{pick,tiny}dns/env/IP >/dev/zero 2>&1;then
@@ -711,6 +817,11 @@ if diff -u %{_sysconfdir}/{dnscache,pickdns}/env/IP >/dev/zero 2>&1;then
 	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
 	echo "or %{_sysconfdir}/pickdns/env/IP."
 fi
+if diff -u %{_sysconfdir}/{dnscachex,pickdns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscachex and pickdns can't work on the same"
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscachex/env/IP"
+	echo "or %{_sysconfdir}/pickdns/env/IP."
+fi
 if diff -u %{_sysconfdir}/{pick,rbl}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: pickdns and rbldns can't work on the same"
 	echo "IP address. You have to edit either %{_sysconfdir}/pickdns/env/IP"
@@ -755,6 +866,11 @@ if diff -u %{_sysconfdir}/{dnscache,walldns}/env/IP >/dev/zero 2>&1;then
 	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
 	echo "or %{_sysconfdir}/walldns/env/IP."
 fi
+if diff -u %{_sysconfdir}/{dnscachex,walldns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscachex and walldns can't work on the same"
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscachex/env/IP"
+	echo "or %{_sysconfdir}/walldns/env/IP."
+fi
 if diff -u %{_sysconfdir}/{pick,wall}dns/env/IP >/dev/zero 2>&1;then
 	echo "Warning: pickdns and walldns can't work on the same"
 	echo "IP address. You have to edit either %{_sysconfdir}/pickdns/env/IP"
@@ -797,6 +913,11 @@ fi
 if diff -u %{_sysconfdir}/{dnscache,rbldns}/env/IP >/dev/zero 2>&1;then
 	echo "Warning: dnscache and rbldns can't work on the same"
 	echo "IP address. You have to edit either %{_sysconfdir}/dnscache/env/IP"
+	echo "or %{_sysconfdir}/rbldns/env/IP."
+fi
+if diff -u %{_sysconfdir}/{dnscachex,rbldns}/env/IP >/dev/zero 2>&1;then
+	echo "Warning: dnscachex and rbldns can't work on the same"
+	echo "IP address. You have to edit either %{_sysconfdir}/dnscachex/env/IP"
 	echo "or %{_sysconfdir}/rbldns/env/IP."
 fi
 if diff -u %{_sysconfdir}/{pick,rbl}dns/env/IP >/dev/zero 2>&1;then
@@ -889,6 +1010,31 @@ fi
 %ghost %attr(600,root,root) %{_sysconfdir}/dnscache/seed
 %{_mandir}/man8/dnscache*
 /service/dnscache
+
+%files dnscachex
+%defattr(644,root,root,755)
+%dir %attr(1755,root,root) %{_sysconfdir}/dnscachex
+%attr(700,root,root) %dir %{_sysconfdir}/dnscachex/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/dnscachex/supervise/*
+
+%dir %attr(1755,root,root) %{_sysconfdir}/dnscachex/log
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dnscachex/log/run
+%attr(700,root,root) %dir %{_sysconfdir}/dnscachex/log/supervise
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %ghost %{_sysconfdir}/dnscachex/log/supervise/*
+%attr(751,dnslog,djbdns) %dir /var/log/djbdns/dnscachex
+%attr(600,dnslog,djbdns) %ghost /var/log/djbdns/dnscachex/lock
+%attr(640,dnslog,djbdns) %ghost /var/log/djbdns/dnscachex/state
+
+%dir %attr(2755,root,root) %{_sysconfdir}/dnscachex/env
+%config %{_sysconfdir}/dnscachex/env/*
+%attr(755,root,root) %{_sysconfdir}/dnscachex/run
+%dir %{_sysconfdir}/dnscachex/root
+%dir %{_sysconfdir}/dnscachex/root/ip
+%dir %{_sysconfdir}/dnscachex/root/servers
+%config %attr(600,root,root) %{_sysconfdir}/dnscachex/root/ip/*
+%config %{_sysconfdir}/dnscachex/root/servers/*
+%ghost %attr(600,root,root) %{_sysconfdir}/dnscachex/seed
+/service/dnscachex
 
 %files tinydns
 %defattr(644,root,root,755)
