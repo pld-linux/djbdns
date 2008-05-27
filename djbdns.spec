@@ -58,7 +58,7 @@ documentation. If you need a DNS server install one of the following
 packages:
 
  - djbdns-dnscache - a local DNS cache
- - djbdns-dnscachex - a external DNS cache
+ - djbdns-dnscachex - an external DNS cache
  - djbdns-tinydns - a DNS server
  - djbdns-tinydns-notify - a tool to send NOTIFY requests
  - djbdns-pickdns - a DNS load-balancing server
@@ -138,6 +138,7 @@ oszczędzić czas.
 
 %package dnscachex
 Summary:	DJB's external DNS cache
+Summary(pl.UTF-8):	Zewnętrzny cache DNS od DJB
 Group:		Networking/Daemons
 Requires(post):	diffutils
 Requires(post):	fileutils
@@ -145,10 +146,17 @@ Requires(preun):	daemontools
 Requires:	%{name}-dnscache = %{version}-%{release}
 
 %description dnscachex
-dnscachex is a external DNS cache from the djbdns package. It accepts
+dnscachex is an external DNS cache from the djbdns package. It accepts
 recursive DNS queries from external clients such as web browsers and
 mail transfer agents. It collects responses from remote DNS servers.
 It caches the responses to save time later.
+
+%description dnscachex -l pl.UTF-8
+dnscache jest zewnętrznym cachem DNS z pakietu djbdns. Przyjmuje on
+rekursywne zapytania DNS od zewnętrznych klientów takich jak
+przeglądarki WWW i agenci transferu poczty (MTA). Zbiera on odpowiedzi
+od zdalnych serwerów DNS. Zapamiętuje on odpowiedzi, żeby później
+oszczędzić czas.
 
 %package tinydns
 Summary:	DJB's DNS server
