@@ -6,7 +6,7 @@ Summary:	DJB DNS
 Summary(pl.UTF-8):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	23.2
+Release:	24
 # http://cr.yp.to/distributors.html
 License:	Public Domain
 Group:		Networking/Daemons
