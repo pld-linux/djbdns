@@ -6,7 +6,7 @@ Summary:	DJB DNS
 Summary(pl.UTF-8):	DJB DNS
 Name:		djbdns
 Version:	1.05
-Release:	24
+Release:	25
 # http://cr.yp.to/distributors.html
 License:	Public Domain
 Group:		Networking/Daemons
@@ -34,6 +34,10 @@ Patch9:		%{name}-tinydns-log-ipv6.patch
 # http://romana.now.ie/software/djbdns-cachestats.patch
 Patch10:	%{name}-cachestats.patch
 Patch11:	%{name}-ipv6-incfix.patch
+Patch12:	%{name}-dnscache-merge-similar-outgoing-queries.patch
+# http://www.your.org/dnscache/0001-dnscache-merge-similar-outgoing-queries.patch
+Patch13:	%{name}-dnscache-cache-soa-records.patch
+# http://www.your.org/dnscache/0002-dnscache-cache-soa-records.patch
 URL:		http://cr.yp.to/djbdns.html
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
@@ -373,6 +377,8 @@ install %{SOURCE4} .
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
+%patch13 -p1
 cd doc
 ln -s merge/djbdns/* .
 
