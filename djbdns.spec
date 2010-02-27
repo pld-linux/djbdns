@@ -1016,7 +1016,7 @@ fi
 %dir %{_sysconfdir}/dnscache/root/servers
 %config %attr(600,root,root) %{_sysconfdir}/dnscache/root/ip/*
 %config %{_sysconfdir}/dnscache/root/servers/*
-%ghost %attr(600,root,root) %{_sysconfdir}/dnscache/seed
+%attr(600,root,root) %ghost %{_sysconfdir}/dnscache/seed
 %{_mandir}/man8/dnscache*
 /service/dnscache
 
@@ -1042,7 +1042,7 @@ fi
 %dir %{_sysconfdir}/dnscachex/root/servers
 %config %attr(600,root,root) %{_sysconfdir}/dnscachex/root/ip/*
 %config %{_sysconfdir}/dnscachex/root/servers/*
-%ghost %attr(600,root,root) %{_sysconfdir}/dnscachex/seed
+%attr(600,root,root) %ghost %{_sysconfdir}/dnscachex/seed
 /service/dnscachex
 
 %files tinydns
