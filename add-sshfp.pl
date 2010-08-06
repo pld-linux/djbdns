@@ -1,4 +1,7 @@
 #!/usr/bin/perl
+# Snippet from
+# http://dank.qemfd.net/dankwiki/index.php/SSHFP
+# By Henning Brauer
 
 use strict;
 
