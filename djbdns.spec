@@ -19,11 +19,13 @@ Source2:	ftp://ftp.innominate.org/gpa/djb/%{name}-%{version}-man.tar.gz
 Source3:	http://www.sericyb.com.au/tinydns-notify
 # NoSource3-md5:	2213bdc8c58c10cb8770b7e5b0d67aea
 Source4:	http://www.sericyb.com.au/tinydns-log
-# NoSource4-md5:	a9af7707a7cb7c41e855f441e242e422
+# NoSource4-md5:	2cc75dc47a66d38e03ce2d33443930b6
 Patch0:		dnscache-1.05-multiple-ip.patch
 # adds IPv6 support
 Patch1:		http://www.fefe.de/dns/%{name}-1.05-test22.diff.bz2
+# Patch1-md5:	afab02b7e3afe58b93d15ddf4e5f90b4
 Patch3:		http://iksz.hu/package/djbdns-conf/%{name}-1.05-multi_tinydns_data.patch
+# Patch3-md5:	3b59e08b6e9d2c5538762ee60c286867
 Patch4:		%{name}-srv.patch
 Patch5:		%{name}-glibc.patch
 # http://www.iecc.com/rbldns-patch.txt
