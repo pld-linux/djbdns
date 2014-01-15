@@ -509,7 +509,11 @@ make_supervise_service tinydns
 s=$RPM_BUILD_ROOT%{_sysconfdir}/tinydns
 cat>$s/log/run<<EOF
 #!/bin/sh
+# log all
 exec setuidgid dnslog multilog t /var/log/djbdns/tinydns
+
+# log fatal and startup messages only
+#exec setuidgid dnslog multilog t '-*' '+* fatal: *' '+* starting *' /var/log/djbdns/tinydns
 EOF
 mkdir $s/env
 echo %{_sysconfdir}/tinydns/root > $s/env/ROOT
