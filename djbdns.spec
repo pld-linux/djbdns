@@ -369,18 +369,18 @@ informacji.
 install %{SOURCE3} .
 install %{SOURCE4} .
 
-%patch1 -p1
-%patch0 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5
-%patch6 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
+%patch -P1 -p1
+%patch -P0 -p1
+%patch -P3 -p1
+%patch -P4 -p1
+%patch -P5
+%patch -P6 -p1
+%patch -P8 -p1
+%patch -P9 -p1
+%patch -P10 -p1
+%patch -P11 -p1
+%patch -P12 -p1
+%patch -P13 -p1
 cd doc
 ln -s merge/djbdns/* .
 
